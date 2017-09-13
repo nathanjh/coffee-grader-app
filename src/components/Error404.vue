@@ -6,7 +6,7 @@
     <div>
       <div class="error-card shadow-4 bg-white column items-center justify-center no-wrap">
         <q-icon name="error_outline" color="grey-5" />
-        <p class="caption text-center">Oops. Nothing here...</p>
+        <p class="caption text-center">{{ message }}</p>
         <p class="text-center group">
           <q-btn
             v-if="canGoBack"
@@ -41,7 +41,8 @@ export default {
   },
   data () {
     return {
-      canGoBack: window.history.length > 1
+      canGoBack: window.history.length > 1,
+      message: 'Oops. Nothing here...'
     }
   },
   methods: {
