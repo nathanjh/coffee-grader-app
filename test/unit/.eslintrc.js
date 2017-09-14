@@ -1,4 +1,4 @@
-{
+module.exports = {
   "env": {
     "mocha": true
   },
@@ -6,5 +6,8 @@
     "expect": true,
     "assert": true,
     "sinon": true
+  },
+  "rules": {
+    "no-unused-expressions": "off"
   }
 }
