@@ -41,26 +41,26 @@ const mutations = {
 
 export const actions = api => ({
   signIn ({commit}, form) {
-    console.log('sign in!')
+    // console.log('sign in!')
     return new Promise((resolve, reject) => {
       api.post('auth/sign_in.json', {
         email: form.email,
         password: form.password
       })
         .then(response => {
-          console.log(response)
+          // console.log(response)
           commit('updateUser', response.data.user)
           commit('updateAuth', response.headers)
           resolve(response.data.user)
         })
         .catch(error => {
-          console.log(error.response)
+          // console.log(error.response)
           reject(error.response.data.errors)
         })
     })
   },
   signUp ({commit}, form) {
-    console.log('Sign up!')
+    // console.log('Sign up!')
     return new Promise((resolve, reject) => {
       api.post('auth.json', {
         name: form.name,
@@ -71,13 +71,13 @@ export const actions = api => ({
         invite_token: form.inviteToken
       })
         .then(response => {
-          console.log(response)
+          // console.log(response)
           commit('updateUser', response.data.user)
           commit('updateAuth', response.headers)
           resolve(response.data.user)
         })
         .catch(error => {
-          console.log(error.response.data.errors)
+          // console.log(error.response.data.errors)
           reject(error.response.data.errors)
         })
     })
@@ -91,7 +91,7 @@ export const actions = api => ({
         headers: state.auth.headers
       })
         .then(response => {
-          console.log(response)
+          // console.log(response)
           commit('updateUser', response.data.user)
           commit('updateAuth', response.headers)
           resolve(response.data.user)

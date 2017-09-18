@@ -15,27 +15,27 @@ const mockSessionsApi = api(apiResponse)
 
 const { signIn, signUp, setUserFromOAuth } = actions(mockSessionsApi)
 
-describe('actions', () => {
+describe('sessions module: actions', () => {
   describe('signIn', () => {
     it("commits 'updateUser' and 'updateAuth' mutations with expected payload",
       done => {
         const spy = sinon.spy(context, 'commit')
         signIn(context, {})
-        .then(() => {
-          assert(spy.calledWith('updateUser', apiResponse.data.user))
-          assert(spy.calledWith('updateAuth', apiResponse.headers))
-          done()
-        })
-        .catch(e => done(e))
+          .then(() => {
+            assert(spy.calledWith('updateUser', apiResponse.data.user))
+            assert(spy.calledWith('updateAuth', apiResponse.headers))
+            done()
+          })
+          .catch(e => done(e))
         spy.restore()
       })
     it('returns a promise that resolves to a user object', (done) => {
       signIn(context, {})
-      .then(r => {
-        expect(r).to.deep.equal(apiResponse.data.user)
-        done()
-      })
-      .catch(e => done(e))
+        .then(r => {
+          expect(r).to.deep.equal(apiResponse.data.user)
+          done()
+        })
+        .catch(e => done(e))
     })
   })
 
@@ -44,21 +44,21 @@ describe('actions', () => {
       done => {
         const spy = sinon.spy(context, 'commit')
         signUp(context, {})
-        .then(() => {
-          assert(spy.calledWith('updateUser', apiResponse.data.user))
-          assert(spy.calledWith('updateAuth', apiResponse.headers))
-          done()
-        })
-        .catch(e => done(e))
+          .then(() => {
+            assert(spy.calledWith('updateUser', apiResponse.data.user))
+            assert(spy.calledWith('updateAuth', apiResponse.headers))
+            done()
+          })
+          .catch(e => done(e))
         spy.restore()
       })
     it('returns a promise that resolves to a user object', (done) => {
       signUp(context, {})
-      .then(r => {
-        expect(r).to.deep.equal(apiResponse.data.user)
-        done()
-      })
-      .catch(e => done(e))
+        .then(r => {
+          expect(r).to.deep.equal(apiResponse.data.user)
+          done()
+        })
+        .catch(e => done(e))
     })
   })
 
@@ -67,22 +67,22 @@ describe('actions', () => {
       done => {
         const spy = sinon.spy(context, 'commit')
         setUserFromOAuth(context, {})
-        .then(() => {
-          assert(spy.calledWith('updateUser', apiResponse.data.user))
-          assert(spy.calledWith('updateAuth', apiResponse.headers))
-          done()
-        })
-        .catch(e => done(e))
+          .then(() => {
+            assert(spy.calledWith('updateUser', apiResponse.data.user))
+            assert(spy.calledWith('updateAuth', apiResponse.headers))
+            done()
+          })
+          .catch(e => done(e))
         spy.restore()
       })
 
     it('returns a promise that resolves to a user object', (done) => {
       setUserFromOAuth(context, {})
-      .then(r => {
-        expect(r).to.deep.equal(apiResponse.data.user)
-        done()
-      })
-      .catch(e => done(e))
+        .then(r => {
+          expect(r).to.deep.equal(apiResponse.data.user)
+          done()
+        })
+        .catch(e => done(e))
     })
   })
 })
