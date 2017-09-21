@@ -70,6 +70,14 @@ export default {
     const propVals = Object.values(this._props.authHeaders)
     if (propVals.every(val => val !== undefined)) {
       this.updateAuth(this._props.authHeaders)
+      // use our new credentials to get the current user
+      this.$router.push({path: '/'}, () => {
+        this.setUserFromOAuth()
+          .then(response => Toast.create.positive(`Welcome back, ${response.username}.`))
+          .catch(error => {
+            console.log(`Couldn't set user from uid. Status: ${error.status}, ${error.statusText}`)
+          })
+      })
     }
   }
 }

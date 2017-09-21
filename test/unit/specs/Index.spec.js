@@ -1,14 +1,15 @@
 import 'babel-polyfill'
-import { mount } from 'vue-test-utils'
+import { createLocalVue, mount } from 'vue-test-utils'
 import Index from '@/Index'
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueRouter from 'vue-router'
 import Sessions from 'src/store/modules/sessions'
 import { Toast } from 'quasar'
 
-Vue.use(Vuex)
-
 describe('Index.vue', () => {
+  Vue.use(Vuex)
+
   describe('rendered content', () => {
     it('displays the title', () => {
       const wrapper = mount(Index)
@@ -101,7 +102,11 @@ describe('Index.vue', () => {
         expect(Index.created).to.be.a('function')
       })
       context('with valid authHeaders prop values', () => {
-        let mockHeaders, store, routes, router
+        const localVue = createLocalVue()
+        localVue.use(VueRouter)
+
+        let mockHeaders, store, router, options
+
         beforeEach(() => {
           // mock headers object
           mockHeaders = {
@@ -113,24 +118,43 @@ describe('Index.vue', () => {
           store = new Vuex.Store({
             modules: { Sessions }
           })
-        })
-        it('calls the updateAuth mutation', () => {
-          // spy on updateAuth method
-          const spy = sinon.spy(Index.methods, 'updateAuth')
-          // create / mount a vue instance
-          const wrapper = mount(Index, {
+          router = new VueRouter({
+            routes: [{ path: '/', component: Index }]
+          })
+          options = {
+            localVue,
             store,
+            router,
             propsData: {
               authHeaders: mockHeaders
             }
-          })
-          // check that spy was called
+          }
+        })
+        it('calls the updateAuth mutation', () => {
+          const spy = sinon.spy(Index.methods, 'updateAuth')
+          mount(Index, options)
           assert(spy.calledOnce)
           spy.restore()
         })
-        it('reloads the page')
-        it('dispatches the setUserFromOAuth action')
-        it('creates a quasar toast')
+        it('reloads the page', () => {
+          const spy = sinon.spy(router, 'push')
+          mount(Index, options)
+          assert(spy.calledWith({ path: '/' }))
+          spy.restore()
+        })
+        it('dispatches the setUserFromOAuth action', () => {
+          // to force the onSuccess callback on router.push...
+          const pusher = sinon.stub(router, 'push').callsArg(1)
+          const stub = sinon.stub(Index.methods, 'setUserFromOAuth')
+          stub.returns(Promise.resolve({username: 'test'}))
+          mount(Index, options)
+          assert(stub.calledOnce)
+
+          stub.restore()
+          pusher.restore()
+        })
+        it('creates a quasar toast on success')
+        it('creates a quasar toast on failure')
       })
       context('without vaild authHeaders prop values', () => {
         it("doesn't call the updateAuth mutation", () => {
@@ -141,7 +165,7 @@ describe('Index.vue', () => {
             uid: undefined
           }
           const spy = sinon.spy(Index.methods, 'updateAuth')
-          const wrapper = mount(Index, {
+          mount(Index, {
             propsData: {
               authHeaders: mockHeaders
             }
