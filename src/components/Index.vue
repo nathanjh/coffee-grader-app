@@ -5,6 +5,24 @@
       <q-toolbar-title>
         Coffee Grader
       </q-toolbar-title>
+      <template v-if="loggedIn">
+        <img v-if="currentUser && currentUser.image"
+             :src="currentUser.image"
+             class="avatar"
+             data-img-type="avatar">
+        <q-icon v-else name="account_circle" data-icon-type="account"/>
+        <q-btn flat
+               data-button-type="sign-out"
+               @click="signOut">
+          Sign out
+        </q-btn>
+      </template>
+      <q-btn v-else
+             flat
+             data-button-type="sign-in"
+             @click="triggerModal">
+        Sign in
+      </q-btn>
     </q-toolbar>
 
     <router-view />
@@ -17,6 +35,8 @@ import {
   QLayout,
   QToolbar,
   QToolbarTitle,
+  QBtn,
+  QIcon,
   Toast
 } from 'quasar'
 import {
@@ -30,7 +50,9 @@ export default {
   components: {
     QLayout,
     QToolbar,
-    QToolbarTitle
+    QToolbarTitle,
+    QBtn,
+    QIcon
   },
   data () {
     return {

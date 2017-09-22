@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import { createLocalVue, mount } from 'vue-test-utils'
+import { createLocalVue, shallow, mount } from 'vue-test-utils'
 import Index from '@/Index'
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -9,12 +9,73 @@ import { Toast } from 'quasar'
 
 describe('Index.vue', () => {
   Vue.use(Vuex)
-
+  /* add a store instance available to all tests, as vuex binding 'loggedIn' needs
+  to be available to the render function (it's used in the template) */
+  const store = new Vuex.Store({
+    modules: { Sessions }
+  })
   describe('rendered content', () => {
     it('displays the title', () => {
-      const wrapper = mount(Index)
-
+      const wrapper = mount(Index, { store })
       expect(wrapper.text()).to.include('Coffee Grader')
+    })
+    context('when logged in', () => {
+      let wrapper, signOutHandler
+      beforeEach(() => {
+        // mutate the store before rendering component so tests can run synchronously
+        store.commit('updateAuth', {})
+        store.commit('updateUser', { name: 'Johnny5' })
+        signOutHandler = sinon.spy(Index.methods, 'signOut')
+        wrapper = mount(Index, { store })
+      })
+      afterEach(() => {
+        wrapper.vm.$store.commit('clearAllSessionData')
+        signOutHandler.restore()
+      })
+      it('renders a sign-out button', () => {
+        const signOutButton = wrapper.find('[data-button-type="sign-out"]')
+        assert(signOutButton.is('button'))
+        expect(signOutButton.text()).to.include('Sign out')
+      })
+      it('signOut button calls signOut method on click event', () => {
+        const signOutButton = wrapper.find('[data-button-type="sign-out"]')
+        signOutButton.trigger('click')
+        assert(signOutHandler.calledOnce)
+      })
+      context('when currentUser object has an image property', () => {
+        it("renders the user's image in the header", done => {
+          wrapper.vm.$store.commit('updateUser', { image: 'noice-pic' })
+          wrapper.vm.$nextTick(() => {
+            const avatar = wrapper.find('[data-img-type="avatar"]')
+            assert(avatar.is('img'))
+            expect(avatar.element.getAttribute('src')).to.equal('noice-pic')
+            done()
+          })
+        })
+      })
+      context('when no currentUser.image available', () => {
+        it('renders a generic user icon in the header', () => {
+          const acctIcon = wrapper.find('[data-icon-type="account"]')
+          assert(acctIcon.is('i'))
+          expect(acctIcon.text()).to.equal('account_circle')
+        })
+      })
+    })
+    context('when not logged in', () => {
+      it('renders a sign-in button', () => {
+        const wrapper = mount(Index, { store })
+        const signInButton = wrapper.find('[data-button-type="sign-in"]')
+        assert(signInButton.is('button'))
+        expect(signInButton.text()).to.include('Sign in')
+      })
+      it('signIn button calls triggerModal method on click event', () => {
+        const handler = sinon.stub(Index.methods, 'triggerModal')
+        const wrapper = mount(Index, { store })
+        const signInButton = wrapper.find('[data-button-type="sign-in"]')
+        signInButton.trigger('click')
+        assert(handler.called)
+        handler.restore()
+      })
     })
   })
   describe('computed properties', () => {
@@ -40,22 +101,16 @@ describe('Index.vue', () => {
       })
     })
     describe('signOut', () => {
-      let store
-      before(() => {
-        store = new Vuex.Store({
-          modules: { Sessions }
-        })
-      })
       it('commits the clearAllSessionData mutation', () => {
         const spy = sinon.spy(Index.methods, 'clearAllSessionData')
-        const wrapper = mount(Index, { store })
+        const wrapper = shallow(Index, { store })
         wrapper.vm.signOut()
         assert(spy.calledOnce)
         spy.restore()
       })
       it('creates a quasar Toast', () => {
         const spy = sinon.spy(Toast, 'create')
-        const wrapper = mount(Index, { store })
+        const wrapper = shallow(Index, { store })
         wrapper.vm.signOut()
         assert(spy.calledOnce)
         spy.restore()
@@ -63,13 +118,13 @@ describe('Index.vue', () => {
     })
     describe('triggerModal', () => {
       it('sets the modalOpen data property to true', () => {
-        const wrapper = mount(Index)
+        const wrapper = shallow(Index, { store })
         expect(wrapper.vm.$data.modalOpen).to.equal(false)
         wrapper.vm.triggerModal()
         expect(wrapper.vm.$data.modalOpen).to.equal(true)
       })
       it('resets modalOpen to false in 500ms', done => {
-        const wrapper = mount(Index)
+        const wrapper = shallow(Index, { store })
         wrapper.vm.triggerModal()
         setTimeout(() => {
           expect(wrapper.vm.$data.modalOpen).to.equal(false)
@@ -92,7 +147,7 @@ describe('Index.vue', () => {
   })
   describe('props', () => {
     it('has an authHeaders prop', () => {
-      const wrapper = mount(Index)
+      const wrapper = shallow(Index, { store })
       expect(wrapper.hasProp('authHeaders')).to.be.true
     })
   })
@@ -105,7 +160,7 @@ describe('Index.vue', () => {
         const localVue = createLocalVue()
         localVue.use(VueRouter)
 
-        let mockHeaders, store, router, options
+        let mockHeaders, router, options
 
         beforeEach(() => {
           // mock headers object
@@ -115,9 +170,6 @@ describe('Index.vue', () => {
             expiry: 'yyyyy',
             uid: 'zzzzz'
           }
-          store = new Vuex.Store({
-            modules: { Sessions }
-          })
           router = new VueRouter({
             routes: [{ path: '/', component: Index }]
           })
@@ -132,13 +184,13 @@ describe('Index.vue', () => {
         })
         it('calls the updateAuth mutation', () => {
           const spy = sinon.spy(Index.methods, 'updateAuth')
-          mount(Index, options)
+          shallow(Index, options)
           assert(spy.calledOnce)
           spy.restore()
         })
         it('reloads the page', () => {
           const spy = sinon.spy(router, 'push')
-          mount(Index, options)
+          shallow(Index, options)
           assert(spy.calledWith({ path: '/' }))
           spy.restore()
         })
@@ -147,7 +199,7 @@ describe('Index.vue', () => {
           const pusher = sinon.stub(router, 'push').callsArg(1)
           const stub = sinon.stub(Index.methods, 'setUserFromOAuth')
           stub.returns(Promise.resolve({username: 'test'}))
-          mount(Index, options)
+          shallow(Index, options)
           assert(stub.calledOnce)
 
           stub.restore()
@@ -165,7 +217,8 @@ describe('Index.vue', () => {
             uid: undefined
           }
           const spy = sinon.spy(Index.methods, 'updateAuth')
-          mount(Index, {
+          shallow(Index, {
+            store,
             propsData: {
               authHeaders: mockHeaders
             }
