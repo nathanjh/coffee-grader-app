@@ -1,13 +1,70 @@
 <template lang="html">
-
+  <q-layout view="hhh lpr fff">
+    <div class="layout-padding row justify-center">
+      <q-card class="col-12" style="padding: 15px">
+        <q-field
+          icon="account_circle"
+          :error="$v.form.email.$error"
+          error-label="invalid email"
+          data-field-type="email"
+        >
+          <q-input
+            type="email"
+            float-label="Email"
+            v-model="form.email"
+            @input="$v.form.email.$touch"
+            />
+        </q-field>
+        <q-field
+          icon="lock_outline"
+          :error="$v.form.password.$error"
+          error-label="Password must contain at least 6 characters"
+          data-field-type="password"
+        >
+          <q-input
+            type="password"
+            float-label="Password"
+            v-model="form.password"
+            @input="$v.form.password.$touch"
+            />
+        </q-field>
+        <div class="row justify-center" style="padding-top: 10px">
+          <q-btn color="teal" class="col-4">Sign In</q-btn>
+        </div>
+      </q-card>
+    </div>
+    <q-toolbar slot="footer" color="light" class="text-teal-5">
+      <q-toolbar-title class="text-center">
+        Need to create an account?
+      </q-toolbar-title>
+    </q-toolbar>
+  </q-layout>
 </template>
 
 <script>
 import { required, email, minLength } from 'vuelidate/lib/validators'
 import { mapActions } from 'vuex'
-import { Toast } from 'quasar'
+import {
+  Toast,
+  QLayout,
+  QCard,
+  QField,
+  QInput,
+  QBtn,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
 
 export default {
+  components: {
+    QLayout,
+    QCard,
+    QField,
+    QInput,
+    QBtn,
+    QToolbar,
+    QToolbarTitle
+  },
   data () {
     return {
       form: {

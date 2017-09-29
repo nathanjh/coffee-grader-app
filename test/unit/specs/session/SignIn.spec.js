@@ -29,8 +29,6 @@ describe('SignIn.vue', () => {
       expect(SignIn.data().form.password).to.equal('')
     })
   })
-  /* revisit validations tests with checking for error class addition with invalid
-  inputs... */
   describe('form validations (Vuelidate)', () => {
     let form
     beforeEach(() => {
@@ -44,6 +42,16 @@ describe('SignIn.vue', () => {
       expect(Object.keys(form.email)).to.include('email')
       expect(form.email.email).to.be.a('function')
     })
+    it('sets the error class for invaild email', done => {
+      const wrapper = mount(SignIn)
+      // email is required...
+      wrapper.vm.$v.form.email.$touch()
+      wrapper.vm.$nextTick(() => {
+        const emailField = wrapper.find('[data-field-type="email"]')
+        assert(emailField.hasClass('q-field-with-error'))
+        done()
+      })
+    })
     it('validates form.password by requirement', () => {
       expect(Object.keys(form.password)).to.include('required')
       expect(form.password.required).to.be.a('function')
@@ -51,6 +59,16 @@ describe('SignIn.vue', () => {
     it('validates that minimum password length is 6', () => {
       expect(Object.keys(form.password)).to.include('minLength')
       expect(form.password.minLength).to.be.a('function')
+    })
+    it('sets the error class for invaild password', done => {
+      const wrapper = mount(SignIn)
+      // password is required...
+      wrapper.vm.$v.form.password.$touch()
+      wrapper.vm.$nextTick(() => {
+        const pwField = wrapper.find('[data-field-type="password"]')
+        assert(pwField.hasClass('q-field-with-error'))
+        done()
+      })
     })
   })
   describe('methods', () => {

@@ -14,9 +14,11 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
 import store from './store/store'
+import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework
+Vue.use(Vuelidate) // Form validation library
 
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')
