@@ -13,7 +13,7 @@
             float-label="Email"
             v-model="form.email"
             @input="$v.form.email.$touch"
-            />
+          />
         </q-field>
         <q-field
           icon="lock_outline"
@@ -26,10 +26,17 @@
             float-label="Password"
             v-model="form.password"
             @input="$v.form.password.$touch"
-            />
+          />
         </q-field>
         <div class="row justify-center" style="padding-top: 10px">
-          <q-btn color="teal" class="col-4">Sign In</q-btn>
+          <q-btn
+            color="teal"
+            class="col-4"
+            data-button-type="submit-sign-in"
+            @click.prevent="signIn"
+          >
+            Sign In
+          </q-btn>
         </div>
       </q-card>
     </div>

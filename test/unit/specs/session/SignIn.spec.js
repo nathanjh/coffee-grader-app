@@ -10,6 +10,23 @@ import Sessions from 'src/store/modules/sessions'
 describe('SignIn.vue', () => {
   Vue.use(Vuex)
 
+  describe('rendered content', () => {
+    let wrapper, signInButton
+    beforeEach(() => {
+      wrapper = mount(SignIn)
+      signInButton = wrapper.find('[data-button-type="submit-sign-in"]')
+    })
+    it('renders a form submit button', () => {
+      assert(signInButton.is('button'))
+      expect(signInButton.text()).to.include('Sign In')
+    })
+    it('signIn button calls signIn method on click event', () => {
+      const signInHandler = sinon.spy(wrapper.vm, 'signIn')
+      signInButton.trigger('click')
+      assert(signInHandler.calledOnce)
+      signInHandler.restore()
+    })
+  })
   describe('data', () => {
     it('is a function that returns the data object', () => {
       expect(SignIn.data).to.be.a('function')
