@@ -54,10 +54,8 @@ describe('SignIn.vue', () => {
     })
   })
   describe('form validations (Vuelidate)', () => {
-    let form
-    beforeEach(() => {
-      form = SignIn.validations.form
-    })
+    const form = SignIn.validations.form
+
     it('validates form.email by requirement', () => {
       expect(Object.keys(form.email)).to.include('required')
       expect(form.email.required).to.be.a('function')
@@ -130,7 +128,7 @@ describe('SignIn.vue', () => {
           assert(toastSpy.calledOnce)
           toastSpy.restore()
         })
-        it('returns before dispatching submitSignIn action', () => {
+        it('returns before dispatching submitSignIn action if error(s)', () => {
           mount(SignIn, { store })
             .vm.signIn()
           assert(!actionSpy.called)

@@ -63,7 +63,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style scoped lang="css">
   #auth-button {
     display: inline-block;
     background: white;
