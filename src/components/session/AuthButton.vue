@@ -80,10 +80,6 @@ export default {
   #auth-button:active {
     box-shadow: inset 0 0 0 32px rgba(0,0,0,0.1);
   }
-  span.label {
-    font-family: serif;
-    font-weight: normal;
-  }
   span.icon {
     display: inline-block;
     vertical-align: middle;

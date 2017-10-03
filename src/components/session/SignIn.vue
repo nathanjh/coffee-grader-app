@@ -1,7 +1,23 @@
 <template lang="html">
   <q-layout view="hhh lpr fff">
     <div class="layout-padding row justify-center">
-      <q-card class="col-12" style="padding: 15px">
+      <q-card class="col-12">
+        <div class="row justify-center">
+          <auth-button :bgColor="'#027be3'"
+                       :textColor="'#ffffff'"
+                       :authProvider="'google_oauth2'"
+                       :providerIcon="'../../statics/btn_google_light_normal.png'"
+                       :baseURL="oauthBaseURL"
+                       data-button-type="oauth-google"
+          >
+            Sign in with Google
+          </auth-button>
+        </div>
+      </q-card>
+      <div class="row text-faded text-italic justify-center">
+        or
+      </div>
+      <q-card class="col-12">
         <q-field
           icon="account_circle"
           :error="$v.form.email.$error"
@@ -51,6 +67,8 @@
 <script>
 import { required, email, minLength } from 'vuelidate/lib/validators'
 import { mapActions } from 'vuex'
+import CoffeeGraderApi from 'src/api/coffeeGraderApi'
+import AuthButton from '@/session/AuthButton'
 import {
   Toast,
   QLayout,
@@ -64,6 +82,7 @@ import {
 
 export default {
   components: {
+    AuthButton,
     QLayout,
     QCard,
     QField,
@@ -77,7 +96,8 @@ export default {
       form: {
         email: '',
         password: ''
-      }
+      },
+      oauthBaseURL: CoffeeGraderApi.defaults.baseURL
     }
   },
   validations: {
@@ -123,4 +143,7 @@ export default {
 </script>
 
 <style lang="css">
+  div.q-card {
+    padding: 15px;
+  }
 </style>

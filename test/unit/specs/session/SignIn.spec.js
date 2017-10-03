@@ -1,5 +1,6 @@
 import 'babel-polyfill'
 import SignIn from '@/session/SignIn'
+import AuthButton from '@/session/AuthButton'
 import { mount } from 'vue-test-utils'
 // quasar provides a global event bus
 import { Toast, Events } from 'quasar'
@@ -31,6 +32,12 @@ describe('SignIn.vue', () => {
     it('is a function that returns the data object', () => {
       expect(SignIn.data).to.be.a('function')
       expect(SignIn.data()).to.be.a('object')
+    })
+    it('has a string type oauthBaseURL property', () => {
+      expect(SignIn.data().oauthBaseURL).to.be.a('string')
+    })
+    it('oauthBaseURL has a default value', () => {
+      expect(SignIn.data().oauthBaseURL).not.to.equal('')
     })
     it('has an object type form property', () => {
       expect(SignIn.data().form).to.be.a('object')
@@ -206,6 +213,17 @@ describe('SignIn.vue', () => {
         expect(wrapper.vm.form.password).to.equal('')
         // clears all validations
         expect(wrapper.vm.$v.form.$dirty).to.be.false
+      })
+    })
+  })
+  describe('social sign-in buttons', () => {
+    describe('google', () => {
+      let googleBtn
+      beforeEach(() => {
+        googleBtn = mount(SignIn).find('[data-button-type="oauth-google"]')
+      })
+      it('renders the AuthButton component', () => {
+        expect(googleBtn.is(AuthButton))
       })
     })
   })
