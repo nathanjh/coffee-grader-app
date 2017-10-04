@@ -16,6 +16,28 @@ describe('SignUp.vue', () => {
     confirmPassword: 'password'
   }
 
+  describe('rendered content', () => {
+    let wrapper
+    beforeEach(() => {
+      wrapper = mount(SignUp)
+    })
+    describe('signUp button', () => {
+      let signUpButton
+      beforeEach(() => {
+        signUpButton = wrapper.find('[data-button-type="submit-sign-up"]')
+      })
+      it('renders a form submit button', () => {
+        assert(signUpButton.is('button'))
+        expect(signUpButton.text()).to.include('Sign Up')
+      })
+      it('signUp button calls signUp method on click event', () => {
+        const signUpHandler = sinon.spy(wrapper.vm, 'signUp')
+        signUpButton.trigger('click')
+        assert(signUpHandler.calledOnce)
+        signUpHandler.restore()
+      })
+    })
+  })
   describe('data', () => {
     it('is a function that returns the data object', () => {
       expect(SignUp.data).to.be.a('function')
@@ -69,14 +91,14 @@ describe('SignUp.vue', () => {
   })
   describe('form validations (Vuelidate)', () => {
     const formValidationObj = SignUp.validations.form
+    const requiredFields =
+      Object.keys(formValidationObj)
+        .filter(field => field !== 'confirmPassword')
+        .reduce((form, field) => {
+          form[field] = formValidationObj[field]
+          return form
+        }, {})
     it('validates name, username, email, password by requirement', () => {
-      const requiredFields =
-        Object.keys(formValidationObj)
-          .filter(field => field !== 'confirmPassword')
-          .reduce((form, field) => {
-            form[field] = formValidationObj[field]
-            return form
-          }, {})
       for (const field in requiredFields) {
         expect(Object.keys(requiredFields[field])).to.include('required')
         expect(requiredFields[field].required).to.be.a('function')
@@ -87,6 +109,18 @@ describe('SignUp.vue', () => {
         .to.include('confirmPassword')
       expect(formValidationObj.confirmPassword.confirmPassword)
         .to.be.a('function')
+    })
+    it('sets the error class for invalid required field entries', done => {
+      const wrapper = mount(SignUp)
+      // name, username, email, password are required...
+      wrapper.vm.$v.form.$touch()
+      wrapper.vm.$nextTick(() => {
+        Object.keys(requiredFields).forEach(field => {
+          assert(wrapper.find(`[data-field-type="${field}"]`)
+            .hasClass('q-field-with-error'))
+        })
+        done()
+      })
     })
   })
   describe('methods', () => {

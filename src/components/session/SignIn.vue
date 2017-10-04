@@ -19,7 +19,7 @@
       </div>
       <q-card class="col-12">
         <q-field
-          icon="account_circle"
+          icon="mail_outline"
           :error="$v.form.email.$error"
           error-label="invalid email"
           data-field-type="email"
@@ -58,7 +58,11 @@
     </div>
     <q-toolbar slot="footer" color="light" class="text-teal-5">
       <q-toolbar-title class="text-center">
-        Need to create an account?
+        <slot>
+          <router-link :to="'/sign-up'">
+            Need to create an account?
+          </router-link>
+        </slot>
       </q-toolbar-title>
     </q-toolbar>
   </q-layout>
@@ -81,6 +85,7 @@ import {
 } from 'quasar'
 
 export default {
+  name: 'SignIn',
   components: {
     AuthButton,
     QLayout,
@@ -142,8 +147,15 @@ export default {
 }
 </script>
 
-<style scoped lang="css">
-  div.q-card {
-    padding: 15px;
-  }
+<style scoped lang="stylus">
+  @import '~variables'
+
+  div.q-card
+    padding 15px
+
+  a
+    color inherit
+
+  a:hover
+    color: $teal-7
 </style>
