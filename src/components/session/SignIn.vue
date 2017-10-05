@@ -21,20 +21,22 @@
         <q-field
           icon="mail_outline"
           :error="$v.form.email.$error"
-          error-label="invalid email"
+          :error-label="requiredMessage($v.form.email, 'email') ||
+                        invalidMessage($v.form.email, 'email')"
           data-field-type="email"
         >
           <q-input
             type="email"
             float-label="Email"
             v-model="form.email"
-            @input="$v.form.email.$touch"
+            @blur="$v.form.email.$touch"
           />
         </q-field>
         <q-field
           icon="lock_outline"
           :error="$v.form.password.$error"
-          error-label="Password must contain at least 6 characters"
+          :error-label="requiredMessage($v.form.password, 'password') ||
+                        minLengthMessage($v.form.password, 'password')"
           data-field-type="password"
         >
           <q-input
@@ -70,6 +72,7 @@
 
 <script>
 import { required, email, minLength } from 'vuelidate/lib/validators'
+import { validationMessages } from '@/mixins/validationMessages'
 import { mapActions } from 'vuex'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import AuthButton from '@/session/AuthButton'
@@ -86,6 +89,7 @@ import {
 
 export default {
   name: 'SignIn',
+  mixins: [validationMessages],
   components: {
     AuthButton,
     QLayout,
