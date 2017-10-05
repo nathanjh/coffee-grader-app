@@ -6,40 +6,47 @@
           icon="person"
           data-field-type="name"
           :error="$v.form.name.$error"
+          :error-label="requiredMessage($v.form.name, 'name') ||
+                        minLengthMessage($v.form.name, 'name')"
         >
           <q-input
             float-label="Name"
             v-model="form.name"
-            @input="$v.form.name.$touch"
+            @blur="$v.form.name.$touch"
           />
         </q-field>
         <q-field
           icon="person_outline"
           data-field-type="username"
           :error="$v.form.username.$error"
+          :error-label="requiredMessage($v.form.username, 'username')"
         >
           <q-input
             float-label="Username"
             v-model="form.username"
-            @input="$v.form.username.touch"
+            @blur="$v.form.username.$touch"
           />
         </q-field>
         <q-field
           icon="mail_outline"
           data-field-type="email"
           :error="$v.form.email.$error"
+          :error-label="requiredMessage($v.form.email, 'email') ||
+                        invalidMessage($v.form.email, 'email')"
         >
           <q-input
             type="email"
             float-label="Email"
             v-model="form.email"
-            @input="$v.form.email.touch"
+            @blur="$v.form.email.$touch"
           />
         </q-field>
         <q-field
           icon="lock"
           data-field-type="password"
           :error="$v.form.password.$error"
+          :error-label="requiredMessage($v.form.password, 'password') ||
+                        minLengthMessage($v.form.password, 'password')"
         >
           <q-input
             type="password"
@@ -52,6 +59,7 @@
           icon="lock_outline"
           data-field-type="password-confirmation"
           :error="$v.form.confirmPassword.$error"
+          :error-label="confirmPasswordMessage($v.form.confirmPassword)"
         >
           <q-input
             type="password"
@@ -109,10 +117,13 @@ import {
   minLength,
   sameAs
 } from 'vuelidate/lib/validators'
+import { validationMessages } from '@/mixins/validationMessages'
 
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'SignUp',
+  mixins: [validationMessages],
   components: {
     QLayout,
     QCard,
