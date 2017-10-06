@@ -141,7 +141,7 @@ describe('Index.vue', () => {
     it('has a boolean type modalOpen property', () => {
       expect(Index.data().modalOpen).to.be.a('boolean')
     })
-    it('modalOpen has an inital value of false', () => {
+    it('modalOpen has an initial value of false', () => {
       expect(Index.data().modalOpen).to.equal(false)
     })
   })

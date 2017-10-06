@@ -26,7 +26,7 @@
     </q-toolbar>
 
     <router-view />
-
+    <session-modal :modalOpen="modalOpen"/>
   </q-layout>
 </template>
 
@@ -44,6 +44,7 @@ import {
   mapMutations,
   mapActions
 } from 'vuex'
+import SessionModal from './session/SessionModal'
 
 export default {
   name: 'index',
@@ -52,7 +53,8 @@ export default {
     QToolbar,
     QToolbarTitle,
     QBtn,
-    QIcon
+    QIcon,
+    SessionModal
   },
   data () {
     return {
