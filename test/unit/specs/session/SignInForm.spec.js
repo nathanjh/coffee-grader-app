@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import SignIn from '@/session/SignIn'
+import SignInForm from '@/session/forms/SignInForm'
 import AuthButton from '@/session/AuthButton'
 import { mount } from 'vue-test-utils'
 // quasar provides a global event bus
@@ -8,13 +8,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Sessions from 'src/store/modules/sessions'
 
-describe('SignIn.vue', () => {
+describe('SignInForm.vue', () => {
   Vue.use(Vuex)
 
   describe('rendered content', () => {
     let wrapper, signInButton
     beforeEach(() => {
-      wrapper = mount(SignIn)
+      wrapper = mount(SignInForm)
       signInButton = wrapper.find('[data-button-type="submit-sign-in"]')
     })
     it('renders a form submit button', () => {
@@ -30,31 +30,31 @@ describe('SignIn.vue', () => {
   })
   describe('data', () => {
     it('is a function that returns the data object', () => {
-      expect(SignIn.data).to.be.a('function')
-      expect(SignIn.data()).to.be.a('object')
+      expect(SignInForm.data).to.be.a('function')
+      expect(SignInForm.data()).to.be.a('object')
     })
     it('has a string type oauthBaseURL property', () => {
-      expect(SignIn.data().oauthBaseURL).to.be.a('string')
+      expect(SignInForm.data().oauthBaseURL).to.be.a('string')
     })
     it('oauthBaseURL has a default value', () => {
-      expect(SignIn.data().oauthBaseURL).not.to.equal('')
+      expect(SignInForm.data().oauthBaseURL).not.to.equal('')
     })
     it('has an object type form property', () => {
-      expect(SignIn.data().form).to.be.a('object')
+      expect(SignInForm.data().form).to.be.a('object')
     })
     it('form has a string type email property', () => {
-      expect(SignIn.data().form.email).to.be.a('string')
+      expect(SignInForm.data().form.email).to.be.a('string')
     })
     it('form has a string type password property', () => {
-      expect(SignIn.data().form.password).to.be.a('string')
+      expect(SignInForm.data().form.password).to.be.a('string')
     })
     it('form.email and form.password default values are empty strings', () => {
-      expect(SignIn.data().form.email).to.equal('')
-      expect(SignIn.data().form.password).to.equal('')
+      expect(SignInForm.data().form.email).to.equal('')
+      expect(SignInForm.data().form.password).to.equal('')
     })
   })
   describe('form validations (Vuelidate)', () => {
-    const form = SignIn.validations.form
+    const form = SignInForm.validations.form
 
     it('validates form.email by requirement', () => {
       expect(Object.keys(form.email)).to.include('required')
@@ -65,7 +65,7 @@ describe('SignIn.vue', () => {
       expect(form.email.email).to.be.a('function')
     })
     it('sets the error class for invalid email', done => {
-      const wrapper = mount(SignIn)
+      const wrapper = mount(SignInForm)
       // email is required...
       wrapper.vm.$v.form.email.$touch()
       wrapper.vm.$nextTick(() => {
@@ -82,7 +82,7 @@ describe('SignIn.vue', () => {
       expect(Object.keys(form.password)).to.include('minLength')
       expect(form.password.minLength).to.be.a('function')
 
-      const wrapper = mount(SignIn)
+      const wrapper = mount(SignInForm)
       wrapper.setData({
         form: {
           password: '12345'
@@ -97,7 +97,7 @@ describe('SignIn.vue', () => {
       })
     })
     it('sets the error class for invalid password', done => {
-      const wrapper = mount(SignIn)
+      const wrapper = mount(SignInForm)
       // password is required...
       wrapper.vm.$v.form.password.$touch()
       wrapper.vm.$nextTick(() => {
@@ -110,7 +110,7 @@ describe('SignIn.vue', () => {
   describe('methods', () => {
     describe('vuex actions', () => {
       it("maps the signIn action to local 'submitSignIn' method", () => {
-        expect(SignIn.methods.submitSignIn).to.be.a('function')
+        expect(SignInForm.methods.submitSignIn).to.be.a('function')
       })
     })
     describe('signIn', () => {
@@ -122,7 +122,7 @@ describe('SignIn.vue', () => {
       let actionSpy
       beforeEach(() => {
         actionSpy =
-          sinon.stub(SignIn.methods, 'submitSignIn')
+          sinon.stub(SignInForm.methods, 'submitSignIn')
             .returns(Promise.resolve({username: 'test'}))
       })
       afterEach(() => {
@@ -130,20 +130,20 @@ describe('SignIn.vue', () => {
       })
       describe('validates form input for errors', () => {
         it('sets all form fields to dirty to check for empty inputs', () => {
-          const wrapper = mount(SignIn, { store })
+          const wrapper = mount(SignInForm, { store })
           wrapper.vm.signIn()
           // $touch method recursively sets $dirty flag for all children
           expect(wrapper.vm.$v.form.$dirty).to.be.true
         })
         it('creates a toast to communicate form input error to the user', () => {
           const toastSpy = sinon.spy(Toast, 'create')
-          mount(SignIn, { store })
+          mount(SignInForm, { store })
             .vm.signIn()
           assert(toastSpy.calledOnce)
           toastSpy.restore()
         })
         it('returns before dispatching submitSignIn action if error(s)', () => {
-          mount(SignIn, { store })
+          mount(SignInForm, { store })
             .vm.signIn()
           assert(!actionSpy.called)
         })
@@ -152,7 +152,7 @@ describe('SignIn.vue', () => {
         it('emits a successfulSignIn event', async function () {
           const spy = sinon.spy()
 
-          const wrapper = mount(SignIn, { store })
+          const wrapper = mount(SignInForm, { store })
           wrapper.setData({
             form: {
               email: 'test@123.com',
@@ -167,7 +167,7 @@ describe('SignIn.vue', () => {
         it('creates a success toast', async function () {
           const spy = sinon.spy(Toast.create, 'positive')
 
-          const wrapper = mount(SignIn, { store })
+          const wrapper = mount(SignInForm, { store })
           wrapper.setData({
             form: {
               email: 'test@123.com',
@@ -184,12 +184,12 @@ describe('SignIn.vue', () => {
       //   it('creates a toast for each error', async function () {
       //     actionSpy.restore()
       //     actionSpy =
-      //       sinon.stub(SignIn.methods, 'submitSignIn')
+      //       sinon.stub(SignInForm.methods, 'submitSignIn')
       //         .returns(Promise.reject(['bad email', 'bad pw']))
       //
       //     const toastSpy = sinon.stub(Toast, 'create')
       //
-      //     const wrapper = mount(SignIn, { store })
+      //     const wrapper = mount(SignInForm, { store })
       //     wrapper.setData({
       //       form: {
       //         email: 'test@123.com',
@@ -206,10 +206,10 @@ describe('SignIn.vue', () => {
   describe('lifecycle hooks', () => {
     describe('created', () => {
       it('has a created hook', () => {
-        expect(SignIn.created).to.be.a('function')
+        expect(SignInForm.created).to.be.a('function')
       })
       it('listens for a clearForm event, and clears form data', () => {
-        const wrapper = mount(SignIn)
+        const wrapper = mount(SignInForm)
         // add data and set $dirty flag on all form fields
         wrapper.setData({
           form: {
@@ -232,7 +232,7 @@ describe('SignIn.vue', () => {
     describe('google', () => {
       let googleBtn
       beforeEach(() => {
-        googleBtn = mount(SignIn).find('[data-button-type="oauth-google"]')
+        googleBtn = mount(SignInForm).find('[data-button-type="oauth-google"]')
       })
       it('renders the AuthButton component', () => {
         expect(googleBtn.is(AuthButton))
