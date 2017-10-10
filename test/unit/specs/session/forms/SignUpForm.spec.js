@@ -1,11 +1,11 @@
-import SignUp from '@/session/SignUp'
+import SignUpForm from '@/session/forms/SignUpForm'
 import { mount } from 'vue-test-utils'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Sessions from 'src/store/modules/sessions'
 import { Toast, Events } from 'quasar'
 
-describe('SignUp.vue', () => {
+describe('SignUpForm.vue', () => {
   Vue.use(Vuex)
 
   const validFormData = {
@@ -19,7 +19,7 @@ describe('SignUp.vue', () => {
   describe('rendered content', () => {
     let wrapper
     beforeEach(() => {
-      wrapper = mount(SignUp)
+      wrapper = mount(SignUpForm)
     })
     describe('signUp button', () => {
       let signUpButton
@@ -40,32 +40,32 @@ describe('SignUp.vue', () => {
   })
   describe('data', () => {
     it('is a function that returns the data object', () => {
-      expect(SignUp.data).to.be.a('function')
+      expect(SignUpForm.data).to.be.a('function')
     })
     it('has an object type form property', () => {
-      expect(SignUp.data().form).to.be.a('object')
+      expect(SignUpForm.data().form).to.be.a('object')
     })
     it('form has a string type name property', () => {
-      expect(SignUp.data().form.name).to.be.a('string')
+      expect(SignUpForm.data().form.name).to.be.a('string')
     })
     it('form has a string type username property', () => {
-      expect(SignUp.data().form.username).to.be.a('string')
+      expect(SignUpForm.data().form.username).to.be.a('string')
     })
     it('form has a string type email property', () => {
-      expect(SignUp.data().form.email).to.be.a('string')
+      expect(SignUpForm.data().form.email).to.be.a('string')
     })
     it('form has a string type password property', () => {
-      expect(SignUp.data().form.password).to.be.a('string')
+      expect(SignUpForm.data().form.password).to.be.a('string')
     })
     it('form has a string type confirmPassword property', () => {
-      expect(SignUp.data().form.confirmPassword).to.be.a('string')
+      expect(SignUpForm.data().form.confirmPassword).to.be.a('string')
     })
     it('form has a string type inviteToken property', () => {
-      const wrapper = mount(SignUp)
+      const wrapper = mount(SignUpForm)
       expect(wrapper.vm.form.inviteToken).to.be.a('string')
     })
     it('all form field values default to empty strings', () => {
-      const form = mount(SignUp).vm.form
+      const form = mount(SignUpForm).vm.form
       for (const field in form) {
         expect(form[field]).to.equal('')
       }
@@ -73,24 +73,24 @@ describe('SignUp.vue', () => {
   })
   describe('props', () => {
     it('has a props object', () => {
-      expect(SignUp.props).to.be.a('object')
+      expect(SignUpForm.props).to.be.a('object')
     })
     describe('inviteToken', () => {
       it('validates String type', () => {
-        expect(SignUp.props.inviteToken).to.be.a('object')
-        expect(SignUp.props.inviteToken.type).to.equal(String)
+        expect(SignUpForm.props.inviteToken).to.be.a('object')
+        expect(SignUpForm.props.inviteToken.type).to.equal(String)
       })
       it('default value is an empty string', () => {
-        expect(SignUp.props.inviteToken.default).to.equal('')
+        expect(SignUpForm.props.inviteToken.default).to.equal('')
       })
       it('receives valid data', () => {
-        const wrapper = mount(SignUp, { propsData: { inviteToken: '123abc' } })
+        const wrapper = mount(SignUpForm, { propsData: { inviteToken: '123abc' } })
         assert(wrapper.hasProp('inviteToken', '123abc'))
       })
     })
   })
   describe('form validations (Vuelidate)', () => {
-    const formValidationObj = SignUp.validations.form
+    const formValidationObj = SignUpForm.validations.form
     const requiredFields =
       Object.keys(formValidationObj)
         .filter(field => field !== 'confirmPassword')
@@ -111,7 +111,7 @@ describe('SignUp.vue', () => {
         .to.be.a('function')
     })
     it('sets the error class for invalid required field entries', done => {
-      const wrapper = mount(SignUp)
+      const wrapper = mount(SignUpForm)
       // name, username, email, password are required...
       wrapper.vm.$v.form.$touch()
       wrapper.vm.$nextTick(() => {
@@ -126,7 +126,7 @@ describe('SignUp.vue', () => {
   describe('methods', () => {
     describe('vuex actions', () => {
       it("maps the signUp action to local 'submitSignUp' method", () => {
-        expect(SignUp.methods.submitSignUp).to.be.a('function')
+        expect(SignUpForm.methods.submitSignUp).to.be.a('function')
       })
     })
     describe('signUp', () => {
@@ -138,7 +138,7 @@ describe('SignUp.vue', () => {
       let actionSpy
       beforeEach(() => {
         actionSpy =
-          sinon.stub(SignUp.methods, 'submitSignUp')
+          sinon.stub(SignUpForm.methods, 'submitSignUp')
             .returns(Promise.resolve({ username: 'test' }))
       })
       afterEach(() => {
@@ -146,20 +146,20 @@ describe('SignUp.vue', () => {
       })
       describe('validates form input for errors', () => {
         it('sets all form fields to dirty to check for empty inputs', () => {
-          const wrapper = mount(SignUp, { store })
+          const wrapper = mount(SignUpForm, { store })
           wrapper.vm.signUp()
           // $touch method recursively sets $dirty flag for all children
           expect(wrapper.vm.$v.form.$dirty).to.be.true
         })
         it('creates a toast to communicate form imput error to the user', () => {
           const toastSpy = sinon.spy(Toast, 'create')
-          mount(SignUp, { store })
+          mount(SignUpForm, { store })
             .vm.signUp()
           assert(toastSpy.calledOnce)
           toastSpy.restore()
         })
         it('returns before dispatching submitSignUp action if error(s)', () => {
-          mount(SignUp, { store })
+          mount(SignUpForm, { store })
             .vm.signUp()
           assert(!actionSpy.called)
         })
@@ -168,7 +168,7 @@ describe('SignUp.vue', () => {
         it('emits a successfulSignUp event', async function () {
           const spy = sinon.spy()
 
-          const wrapper = mount(SignUp, { store })
+          const wrapper = mount(SignUpForm, { store })
           wrapper.setData({ form: validFormData })
           // listen for successfulSignUp event...
           wrapper.vm.$on('successfulSignUp', spy)
@@ -178,7 +178,7 @@ describe('SignUp.vue', () => {
         it('creates a success toast', async function () {
           const spy = sinon.spy(Toast.create, 'positive')
 
-          const wrapper = mount(SignUp, { store })
+          const wrapper = mount(SignUpForm, { store })
           wrapper.setData({ form: validFormData })
 
           await wrapper.vm.signUp()
@@ -192,10 +192,10 @@ describe('SignUp.vue', () => {
   describe('lifecycle hooks', () => {
     describe('created', () => {
       it('has a created hook', () => {
-        expect(SignUp.created).to.be.a('function')
+        expect(SignUpForm.created).to.be.a('function')
       })
       it('listens for a clearForm event, and clears form data', () => {
-        const wrapper = mount(SignUp)
+        const wrapper = mount(SignUpForm)
         // add data and set $dirty flag on all form fields
         wrapper.setData({ form: validFormData })
         const form = wrapper.vm.form
