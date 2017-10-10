@@ -1,7 +1,7 @@
 <template lang="html">
   <q-layout view="hhh lpr fff">
 
-    <sign-in-form data-form-type="sign-in"/>
+    <sign-in-form/>
 
     <q-toolbar slot="footer" color="light" class="text-teal-5">
       <q-toolbar-title class="text-center">

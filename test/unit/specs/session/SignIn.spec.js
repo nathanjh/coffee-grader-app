@@ -14,8 +14,8 @@ describe('SignIn.vue', () => {
     it('renders a sign-up link', () => {
       const link =
         mount(SignIn)
-          .findAll('a')
-            .at(1)
+          .find('[data-link-type="sign-up"]')
+
       const linkText = SignIn.data().linkText
 
       expect(link.element.getAttribute('href')).to.equal('#/sign-up')
