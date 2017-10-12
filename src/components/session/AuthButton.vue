@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import router from '../../router'
-
 export default {
   props: {
     bgColor: {
@@ -33,6 +31,13 @@ export default {
     baseURL: {
       type: String,
       required: true
+    },
+    /* boolean check for vue-router router.mode property to ensure correct
+    origin url value from api redirect after oauth sign-in. pass in false if
+    using history or abstract modes */
+    hashMode: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -55,9 +60,6 @@ export default {
       if (process.env.NODE_ENV === 'development') {
         return 'http://localhost:8080/'
       }
-    },
-    hashMode () {
-      return router.mode === 'hash'
     }
   }
 }

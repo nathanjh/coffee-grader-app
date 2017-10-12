@@ -1,6 +1,5 @@
 import AuthButton from '@/session/AuthButton'
 import { mount } from 'vue-test-utils'
-import router from 'src/router'
 
 describe('AuthButton.vue', () => {
   // component relies almost entirely on data passed in by props
@@ -9,7 +8,8 @@ describe('AuthButton.vue', () => {
     textColor: '#00ff00',
     authProvider: 'test-provider',
     providerIcon: '../statics/fancy_provider_icon.png',
-    baseURL: 'https://myApiWithOauth.com/'
+    baseURL: 'https://myApiWithOauth.com/',
+    hashMode: false
   }
   describe('props', () => {
     it('has a props object', () => {
@@ -80,6 +80,19 @@ describe('AuthButton.vue', () => {
         assert(wrapper.hasProp('baseURL', 'https://myApiWithOauth.com/'))
       })
     })
+    describe('hashMode', () => {
+      it('validates boolean type', () => {
+        expect(AuthButton.props.hashMode).to.be.a('object')
+        expect(AuthButton.props.hashMode.type).to.equal(Boolean)
+      })
+      it('has a default value', () => {
+        expect(AuthButton.props.hashMode.default).to.equal(true)
+      })
+      it('receives valid data', () => {
+        const wrapper = mount(AuthButton, { propsData: testPropsData })
+        assert(wrapper.hasProp('hashMode', false))
+      })
+    })
   })
   describe('computed properties', () => {
     let wrapper
@@ -113,19 +126,11 @@ describe('AuthButton.vue', () => {
         envStub.restore()
       })
     })
-    describe('hashMode', () => {
-      it('checks the router mode and returns a boolean', () => {
-        const routerStub = sinon.stub(router, 'mode').returns('hash')
-        expect(wrapper.vm.hashMode).to.equal(true)
-        routerStub.restore()
-      })
-    })
   })
   describe('rendered content', () => {
-    let wrapper, envStub, routerStub
+    let wrapper, envStub
     beforeEach(() => {
       envStub = sinon.stub(process.env, 'NODE_ENV').returns('development')
-      routerStub = sinon.stub(router, 'mode').returns('hash')
       wrapper = mount(AuthButton, {
         propsData: testPropsData,
         slots: { default: '<span>sign in with test-provider</span>' }
@@ -133,7 +138,6 @@ describe('AuthButton.vue', () => {
     })
     afterEach(() => {
       envStub.restore()
-      routerStub.restore()
     })
     describe('top-level anchor tag', () => {
       it('binds href attribute to computed properties', () => {

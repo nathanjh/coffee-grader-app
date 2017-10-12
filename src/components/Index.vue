@@ -25,7 +25,7 @@
       </q-btn>
     </q-toolbar>
 
-    <router-view />
+    <router-view/>
     <session-modal :modalOpen="modalOpen"/>
   </q-layout>
 </template>

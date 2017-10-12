@@ -3,7 +3,11 @@
 
     <sign-in-form/>
 
-    <q-toolbar slot="footer" color="light" class="text-teal-5">
+    <q-toolbar
+      slot="footer"
+      color="light"
+      class="text-teal-5"
+    >
       <q-toolbar-title class="text-center">
         <router-link
           :to="'/sign-up'"
