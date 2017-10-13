@@ -1,4 +1,4 @@
-import CoffeeGraderApi from '../../api/coffeeGraderApi'
+import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 
 export const STORAGE_KEY = 'coffee-grader'
 
