@@ -8,6 +8,16 @@ export const context = {
         uid: null
       }
     }
+  },
+  rootState: {
+    sessions: {
+      auth: {
+        headers: null
+      },
+      user: {
+        id: null
+      }
+    }
   }
 }
 

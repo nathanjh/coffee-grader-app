@@ -29,7 +29,7 @@ describe('sessions module: actions', () => {
           .catch(e => done(e))
         spy.restore()
       })
-    it('returns a promise that resolves to a user object', (done) => {
+    it('returns a promise that resolves to a user object', done => {
       signIn(context, {})
         .then(r => {
           expect(r).to.deep.equal(apiResponse.data.user)
