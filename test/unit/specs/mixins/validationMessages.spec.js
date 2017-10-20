@@ -7,7 +7,8 @@ describe('validationMessages mixin', () => {
         requiredMessage,
         invalidMessage,
         minLengthMessage,
-        confirmPasswordMessage
+        confirmPasswordMessage,
+        isNumMessage
       }
     } = validationMessages
 
@@ -78,6 +79,22 @@ describe('validationMessages mixin', () => {
         const field = { sameAsPassword: true }
         it('returns undefined', () => {
           expect(confirmPasswordMessage(field))
+            .to.be.undefined
+        })
+      })
+    })
+    describe('isNumMessage', () => {
+      context('given a field where isNum property is false', () => {
+        const field = { isNum: false }
+        it('returns the correct error message', () => {
+          expect(isNumMessage(field, 'test'))
+            .to.equal('test must be a number')
+        })
+      })
+      context('given a field where isNum property is true', () => {
+        const field = { isNum: true }
+        it('returns undefined', () => {
+          expect(isNumMessage(field, 'test'))
             .to.be.undefined
         })
       })

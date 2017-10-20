@@ -15,21 +15,23 @@ const mockSessionsApi = api(apiResponse)
 
 const { signIn, signUp, setUserFromOAuth } = actions(mockSessionsApi)
 
+/* all updateAuth mutation commits (to update tokens, etc. in auth-headers)
+handled by response interceptor registered in 'src/api/coffeeGraderApi' */
+
 describe('sessions module: actions', () => {
   describe('signIn', () => {
-    it("commits 'updateUser' and 'updateAuth' mutations with expected payload",
+    it("commits 'updateUser' mutation with expected payload",
       done => {
         const spy = sinon.spy(context, 'commit')
         signIn(context, {})
           .then(() => {
             assert(spy.calledWith('updateUser', apiResponse.data.user))
-            assert(spy.calledWith('updateAuth', apiResponse.headers))
             done()
           })
           .catch(e => done(e))
         spy.restore()
       })
-    it('returns a promise that resolves to a user object', (done) => {
+    it('returns a promise that resolves to a user object', done => {
       signIn(context, {})
         .then(r => {
           expect(r).to.deep.equal(apiResponse.data.user)
@@ -40,13 +42,12 @@ describe('sessions module: actions', () => {
   })
 
   describe('signUp', () => {
-    it("commits 'updateUser' and 'updateAuth' mutations with expected payload",
+    it("commits 'updateUser' mutation with expected payload",
       done => {
         const spy = sinon.spy(context, 'commit')
         signUp(context, {})
           .then(() => {
             assert(spy.calledWith('updateUser', apiResponse.data.user))
-            assert(spy.calledWith('updateAuth', apiResponse.headers))
             done()
           })
           .catch(e => done(e))
@@ -63,13 +64,12 @@ describe('sessions module: actions', () => {
   })
 
   describe('setUserFromOAuth', () => {
-    it("commits 'updateUser' and 'updateAuth' mutations with expected payload",
+    it("commits 'updateUser' mutation with expected payload",
       done => {
         const spy = sinon.spy(context, 'commit')
         setUserFromOAuth(context, {})
           .then(() => {
             assert(spy.calledWith('updateUser', apiResponse.data.user))
-            assert(spy.calledWith('updateAuth', apiResponse.headers))
             done()
           })
           .catch(e => done(e))

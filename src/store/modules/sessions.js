@@ -1,4 +1,4 @@
-import CoffeeGraderApi from '../../api/coffeeGraderApi'
+import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 
 export const STORAGE_KEY = 'coffee-grader'
 
@@ -50,7 +50,6 @@ export const actions = api => ({
         .then(response => {
           // console.log(response)
           commit('updateUser', response.data.user)
-          commit('updateAuth', response.headers)
           resolve(response.data.user)
         })
         .catch(error => {
@@ -73,7 +72,6 @@ export const actions = api => ({
         .then(response => {
           // console.log(response)
           commit('updateUser', response.data.user)
-          commit('updateAuth', response.headers)
           resolve(response.data.user)
         })
         .catch(error => {
@@ -93,7 +91,6 @@ export const actions = api => ({
         .then(response => {
           // console.log(response)
           commit('updateUser', response.data.user)
-          commit('updateAuth', response.headers)
           resolve(response.data.user)
         })
         .catch(error => {
