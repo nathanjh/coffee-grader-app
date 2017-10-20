@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import sessions from './modules/sessions'
+import cupping from './modules/cupping'
 import plugins from './plugins'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    sessions
+    sessions,
+    cupping
   },
   plugins
 })

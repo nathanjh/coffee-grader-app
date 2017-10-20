@@ -20,6 +20,11 @@ export const validationMessages = {
       if (!field.sameAsPassword) {
         return `passwords must be identical`
       }
+    },
+    isNumMessage (field, name) {
+      if (!field.isNum) {
+        return `${name} must be a number`
+      }
     }
   }
 }

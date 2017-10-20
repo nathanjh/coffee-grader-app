@@ -46,6 +46,8 @@ export default new VueRouter({
       component: load('session/SignUp'),
       props: route => ({ inviteToken: route.query.invite_token })
     },
+    // temp component test path
+    { path: '/test', component: load('cupping/forms/CuppingForm') },
     // Always leave this last one
     { path: '*', component: load('Error404') } // Not found
   ]
