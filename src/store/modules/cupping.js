@@ -15,7 +15,6 @@ export const mutations = {
 
 export const actions = api => ({
   newCupping ({ commit, rootState }, form) {
-    console.log(`new cupping hosted by: ${rootState.sessions.user}`)
     return new Promise((resolve, reject) => {
       api.post('cuppings.json', {
         location: form.location,
@@ -26,7 +25,6 @@ export const actions = api => ({
         headers: rootState.sessions.auth.headers
       })
         .then(response => {
-          console.log(response)
           commit('updateCupping', response.data.cupping)
           resolve(response.data.cupping)
         })
