@@ -33,5 +33,5 @@ const routerLink = {
 Vue.component('router-view', routerView)
 Vue.component('router-link', routerLink)
 // require all test files (files that end with .spec.js)
-const testsContext = require.context('./specs', true, /NewCuppingWizard\.spec$/)
+const testsContext = require.context('./specs', true, /\.spec$/)
 testsContext.keys().forEach(testsContext)

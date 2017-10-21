@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 import Cupping from 'src/store/modules/cupping'
 import { mount } from 'vue-test-utils'
-import { Toast } from 'quasar'
 
 describe('CuppingForm.vue', () => {
   Vue.use(Vuex)
@@ -164,16 +163,6 @@ describe('CuppingForm.vue', () => {
           wrapper.vm.$on('newCuppingCreated', spy)
           await wrapper.vm.createCupping()
           assert(spy.called)
-        })
-        it('creates a success toast', async function () {
-          const spy = sinon.spy(Toast.create, 'positive')
-          const wrapper = mount(CuppingForm, { store })
-
-          wrapper.setData({ form: validFormData })
-          await wrapper.vm.createCupping()
-
-          assert(spy.called)
-          spy.restore()
         })
       })
     })

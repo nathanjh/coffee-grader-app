@@ -26,6 +26,7 @@
           :min="today"
           v-model="form.cupDate"
           float-label="Time"
+          format="dddd, MMM D @ h:mma"
         />
       </q-field>
       <q-field
@@ -113,14 +114,13 @@ export default {
       this.submitNewCupping(this.form)
         .then(response => {
           this.$emit('newCuppingCreated')
-          Toast.create.positive(`New cupping successfully created!`)
         })
         .catch(error => {
           console.log(error)
-          // error.forEach(e => Toast.create({
-          //   html: e,
-          //   icon: 'error_outline'
-          // }))
+          error.forEach(e => Toast.create({
+            html: e,
+            icon: 'error_outline'
+          }))
         })
     }
   }
