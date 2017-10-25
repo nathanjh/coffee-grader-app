@@ -16,10 +16,12 @@ describe('response interceptors', () => {
       mutationSpy.restore()
     })
     context('when signing up/ in (store.isLoggedIn == false)', () => {
+      // make sure we're always logged out before running tests in this block
+      beforeEach(() => store.commit('clearAllSessionData'))
       context('when access-token response header is received', () => {
         it('commits the updateauth mutation to set headers', () => {
           const authHeaders = { 'access-token': 'xxxxxx' }
-
+          console.log(store.getters.isLoggedIn)
           authHandler.fulfilled({
             headers: authHeaders
           })

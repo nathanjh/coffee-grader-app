@@ -13,19 +13,15 @@
 </template>
 
 <script>
+/* wrapper component for QAutocomplete
+   - meant to handle users, coffees, roasters queries */
+import { mapGetters } from 'vuex'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import {
   QInput,
   QAutocomplete
 } from 'quasar'
 
-const parseCollection = (collection) => collection.map(item => {
-  return {
-    label: item.name,
-    sublabel: item.origin,
-    value: item.id
-  }
-})
 export default {
   components: {
     QInput,
@@ -36,20 +32,39 @@ export default {
       terms: ''
     }
   },
+  computed: {
+    ...mapGetters(['authHeaders'])
+  },
   methods: {
+    parseCollection (collection, sublabel) {
+      return collection.map(item => {
+        return {
+          label: item.name,
+          sublabel: item[sublabel],
+          value: item.name,
+          id: item.id
+        }
+      })
+    },
     search (terms, done) {
       CoffeeGraderApi.get('coffees/search.json', {
         params: { term: terms },
-        headers: this.$store.state.sessions.auth.headers
+        headers: this.authHeaders
       })
         .then(response => {
           console.log(response.data.coffees)
-          done(parseCollection(response.data.coffees))
+          const coffees = response.data.coffees
+          if (coffees.length === 0) {
+            this.$emit('noResults')
+            done([])
+          }
+          done(this.parseCollection(response.data.coffees, 'origin'))
         })
         .catch(() => done([]))
     },
     selected (item) {
       console.log(item)
+      this.$emit('itemSelected', item)
     },
     testCall () {
       CoffeeGraderApi.get('cuppings/17.json', {
