@@ -15,7 +15,17 @@ const CoffeeGraderApi = Axios.create({
 
 // response interceptor to set auth headers
 CoffeeGraderApi.interceptors.response.use(response => {
-  store.commit('updateAuth', response.headers)
+  const isLoggedIn = store.getters.isLoggedIn
+  // update the store headers if we are signing in or signing up
+  if (!isLoggedIn && response.headers['access-token']) {
+    store.commit('updateAuth', response.headers)
+  }
+  // otherwise, only update the store headers with the most recent token
+  else if (isLoggedIn && response.headers['access-token'] &&
+           response.headers['expiry'] >
+           store.state.sessions.auth.headers['expiry']) {
+    store.commit('updateAuth', response.headers)
+  }
   return response
 }, error => Promise.reject(error))
 

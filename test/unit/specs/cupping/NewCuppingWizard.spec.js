@@ -1,6 +1,6 @@
 import NewCuppingWizard from '@/cupping/NewCuppingWizard'
 import CuppingForm from '@/cupping/forms/CuppingForm'
-import { mount } from 'vue-test-utils'
+// import { mount } from 'vue-test-utils'
 
 describe('NewCuppingWizard.vue', () => {
   describe('child components', () => {

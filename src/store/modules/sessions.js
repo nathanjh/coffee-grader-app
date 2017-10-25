@@ -101,12 +101,9 @@ export const actions = api => ({
 })
 
 const getters = {
-  isLoggedIn: state => {
-    return state.auth.isLoggedIn
-  },
-  currentUser: state => {
-    return state.user
-  }
+  isLoggedIn: state => state.auth.isLoggedIn,
+  authHeaders: state => state.auth.headers,
+  currentUser: state => state.user
 }
 
 export default {
