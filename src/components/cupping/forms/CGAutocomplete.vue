@@ -23,6 +23,7 @@ import {
 } from 'quasar'
 
 export default {
+  name: 'CGAutocomplete',
   components: {
     QInput,
     QAutocomplete

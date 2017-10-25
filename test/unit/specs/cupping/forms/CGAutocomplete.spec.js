@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import CoffeeAutoComplete from '@/cupping/forms/CoffeeAutoComplete'
+import CGAutocomplete from '@/cupping/forms/CGAutocomplete'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import { mount } from 'vue-test-utils'
 import Vue from 'vue'
@@ -8,17 +8,17 @@ import Sessions from 'src/store/modules/sessions'
 
 Vue.use(Vuex)
 
-describe('CoffeeAutoComplete.vue', () => {
+describe('CGAutocomplete.vue', () => {
   describe('data', () => {
     it('is a function that returns the data object', () => {
-      expect(CoffeeAutoComplete.data).to.be.a('function')
-      expect(CoffeeAutoComplete.data()).to.be.a('object')
+      expect(CGAutocomplete.data).to.be.a('function')
+      expect(CGAutocomplete.data()).to.be.a('object')
     })
     it('has a String type terms property', () => {
-      expect(CoffeeAutoComplete.data().terms).to.be.a('string')
+      expect(CGAutocomplete.data().terms).to.be.a('string')
     })
     it('terms default value is an empty string', () => {
-      expect(CoffeeAutoComplete.data().terms).to.equal('')
+      expect(CGAutocomplete.data().terms).to.equal('')
     })
   })
   describe('methods', () => {
@@ -27,7 +27,7 @@ describe('CoffeeAutoComplete.vue', () => {
         modules: { Sessions }
       })
       it('is a function', () => {
-        expect(CoffeeAutoComplete.methods.search).to.be.a('function')
+        expect(CGAutocomplete.methods.search).to.be.a('function')
       })
       context('when api query returns an empty collection', () => {
         it("emits a 'noResults' event", async function () {
@@ -38,7 +38,7 @@ describe('CoffeeAutoComplete.vue', () => {
               }
             }))
           const spy = sinon.spy()
-          const wrapper = mount(CoffeeAutoComplete, { store })
+          const wrapper = mount(CGAutocomplete, { store })
 
           wrapper.vm.$on('noResults', spy)
 
@@ -61,7 +61,7 @@ describe('CoffeeAutoComplete.vue', () => {
                 coffees: collection
               }
             }))
-          const wrapper = mount(CoffeeAutoComplete, { store })
+          const wrapper = mount(CGAutocomplete, { store })
           const done = sinon.stub()
           const parsedCollection =
             wrapper.vm.parseCollection(collection, 'origin')
@@ -74,14 +74,14 @@ describe('CoffeeAutoComplete.vue', () => {
     })
     describe('selected', () => {
       it('is a function', () => {
-        expect(CoffeeAutoComplete.methods.selected).to.be.a('function')
+        expect(CGAutocomplete.methods.selected).to.be.a('function')
       })
       it("emits an 'itemSelected' event with the expected payload", () => {
         const item = {
           label: 'sample A',
           id: 4
         }
-        const wrapper = mount(CoffeeAutoComplete)
+        const wrapper = mount(CGAutocomplete)
         const spy = sinon.spy()
         wrapper.vm.$on('itemSelected', spy)
 
@@ -91,7 +91,7 @@ describe('CoffeeAutoComplete.vue', () => {
       })
     })
     describe('parseCollection', () => {
-      const parseCollection = CoffeeAutoComplete.methods.parseCollection
+      const parseCollection = CGAutocomplete.methods.parseCollection
 
       it('is a function', () => {
         expect(parseCollection).to.be.a('function')
