@@ -21,6 +21,43 @@ describe('CGAutocomplete.vue', () => {
       expect(CGAutocomplete.data().terms).to.equal('')
     })
   })
+  describe('props', () => {
+    it("has a required String type 'model' prop", () => {
+      const props = CGAutocomplete.props
+      expect(props.model.type).to.equal(String)
+      expect(props.model.required).to.equal(true)
+
+      const wrapper = mount(CGAutocomplete, {
+        propsData: {
+          model: 'coffee',
+          sublabel: 'origin'
+        }
+      })
+      expect(wrapper.hasProp('model', 'coffee')).to.be.true
+    })
+    it("'model' prop validates 'coffee', 'roaster', 'user' values", () => {
+      const validator = CGAutocomplete.props.model.validator
+      expect(validator).to.be.a('function')
+      // positive case
+      new Array('coffee', 'user', 'roaster')
+        .forEach(model => expect(validator(model)).to.equal(true))
+      // negative case
+      expect(validator('someOtherModel')).to.equal(false)
+    })
+    it("has a required String type 'sublabel' prop", () => {
+      const props = CGAutocomplete.props
+      expect(props.sublabel.type).to.equal(String)
+      expect(props.sublabel.required).to.equal(true)
+
+      const wrapper = mount(CGAutocomplete, {
+        propsData: {
+          model: 'roaster',
+          sublabel: 'location'
+        }
+      })
+      expect(wrapper.hasProp('sublabel', 'location')).to.be.true
+    })
+  })
   describe('methods', () => {
     describe('search', () => {
       const store = new Vuex.Store({
@@ -28,6 +65,25 @@ describe('CGAutocomplete.vue', () => {
       })
       it('is a function', () => {
         expect(CGAutocomplete.methods.search).to.be.a('function')
+      })
+      it('calls the api with the correct url', async function () {
+        const apiCall = sinon.stub(CoffeeGraderApi, 'get')
+          .returns(Promise.resolve({
+            data: {
+              users: []
+            }
+          }))
+        const wrapper = mount(CGAutocomplete, {
+          propsData: {
+            model: 'user',
+            sublabel: 'username'
+          },
+          store
+        })
+        const done = sinon.stub()
+        await wrapper.vm.search('somedude', done)
+        expect(apiCall.calledWith('users/search.json')).to.be.true
+        apiCall.restore()
       })
       context('when api query returns an empty collection', () => {
         it("emits a 'noResults' event", async function () {
@@ -38,7 +94,13 @@ describe('CGAutocomplete.vue', () => {
               }
             }))
           const spy = sinon.spy()
-          const wrapper = mount(CGAutocomplete, { store })
+          const wrapper = mount(CGAutocomplete, {
+            propsData: {
+              model: 'coffee',
+              sublabel: 'origin'
+            },
+            store
+          })
 
           wrapper.vm.$on('noResults', spy)
 
@@ -61,7 +123,13 @@ describe('CGAutocomplete.vue', () => {
                 coffees: collection
               }
             }))
-          const wrapper = mount(CGAutocomplete, { store })
+          const wrapper = mount(CGAutocomplete, {
+            propsData: {
+              model: 'coffee',
+              sublabel: 'origin'
+            },
+            store
+          })
           const done = sinon.stub()
           const parsedCollection =
             wrapper.vm.parseCollection(collection, 'origin')
@@ -81,7 +149,12 @@ describe('CGAutocomplete.vue', () => {
           label: 'sample A',
           id: 4
         }
-        const wrapper = mount(CGAutocomplete)
+        const wrapper = mount(CGAutocomplete, {
+          propsData: {
+            model: 'coffee',
+            sublabel: 'origin'
+          }
+        })
         const spy = sinon.spy()
         wrapper.vm.$on('itemSelected', spy)
 

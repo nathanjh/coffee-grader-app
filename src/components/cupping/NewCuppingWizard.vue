@@ -8,6 +8,11 @@
         @newCuppingCreated="cuppingCreated = true"
         data-form-type="cupping-form"
       />
+      <c-g-autocomplete
+        :model="'user'"
+        :sublabel="'username'"
+        @itemSelected="test"
+      />
       <q-stepper-navigation class="row justify-center">
         <q-btn
           v-if="cuppingCreated"
@@ -27,6 +32,7 @@
 
 <script>
 import CuppingForm from './forms/CuppingForm'
+import CGAutocomplete from './forms/CGAutocomplete'
 import {
   QStepper,
   QStep,
@@ -37,6 +43,7 @@ import {
 export default {
   components: {
     CuppingForm,
+    CGAutocomplete,
     QStepper,
     QStep,
     QStepperNavigation,
@@ -46,6 +53,9 @@ export default {
     return {
       cuppingCreated: false
     }
+  },
+  methods: {
+    test (thing) { console.log(thing.id) }
   }
 }
 </script>
