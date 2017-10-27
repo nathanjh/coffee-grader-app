@@ -1,14 +1,13 @@
 <template lang="html">
   <div>
-    <q-input color="amber" v-model="terms" placeholder="coffee">
+    <q-search color="amber" v-model="terms" :placeholder="model">
       <q-autocomplete
       @search="search"
       :min-characters="3"
       @selected="selected"
       :debounce="1000"
       />
-    </q-input>
-    <button @click="testCall">test</button>
+    </q-search>
   </div>
 </template>
 
@@ -18,14 +17,32 @@
 import { mapGetters } from 'vuex'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import {
-  QInput,
+  QSearch,
   QAutocomplete
 } from 'quasar'
 
 export default {
+  name: 'CGAutocomplete',
   components: {
-    QInput,
+    QSearch,
     QAutocomplete
+  },
+  props: {
+    model: {
+      type: String,
+      required: true,
+      validator: function (value) {
+        return [
+          'coffee',
+          'roaster',
+          'user'
+        ].indexOf(value) !== -1
+      }
+    },
+    sublabel: {
+      type: String,
+      required: true
+    }
   },
   data () {
     return {
@@ -47,31 +64,24 @@ export default {
       })
     },
     search (terms, done) {
-      CoffeeGraderApi.get('coffees/search.json', {
+      CoffeeGraderApi.get(`${this.model}s/search.json`, {
         params: { term: terms },
         headers: this.authHeaders
       })
         .then(response => {
-          console.log(response.data.coffees)
-          const coffees = response.data.coffees
-          if (coffees.length === 0) {
+          console.log(response.data[`${this.model}s`])
+          const collection = response.data[`${this.model}s`]
+          if (collection.length === 0) {
             this.$emit('noResults')
             done([])
           }
-          done(this.parseCollection(response.data.coffees, 'origin'))
+          done(this.parseCollection(collection, this.sublabel))
         })
         .catch(() => done([]))
     },
     selected (item) {
       console.log(item)
       this.$emit('itemSelected', item)
-    },
-    testCall () {
-      CoffeeGraderApi.get('cuppings/17.json', {
-        headers: this.$store.state.sessions.auth.headers
-      })
-        .then(response => console.log(response))
-        .catch(e => console.log(e))
     }
   }
 }
