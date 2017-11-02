@@ -11,22 +11,22 @@ import { Toast } from 'quasar'
 Vue.use(Vuex)
 
 describe('CGNewResourceForm.vue', () => {
+  const model = {
+    name: 'coffee',
+    attributes: [
+      'name',
+      'producer',
+      'variety'
+    ]
+  }
+  const validates = {
+    name: { required: true },
+    producer: { required: true }
+  }
+  const store = new Vuex.Store({
+    modules: { Sessions }
+  })
   describe('rendered content', () => {
-    const model = {
-      name: 'coffee',
-      attributes: [
-        'name',
-        'producer',
-        'variety'
-      ]
-    }
-    const validates = {
-      name: { required: true },
-      producer: { required: true }
-    }
-    const store = new Vuex.Store({
-      modules: { Sessions }
-    })
     let wrapper, createResourceButton, clearFormButton
     beforeEach(() => {
       wrapper = mount(CGNewResourceForm, {
@@ -163,18 +163,6 @@ describe('CGNewResourceForm.vue', () => {
     })
   })
   describe('form validation (Vuelidate)', () => {
-    const model = {
-      name: 'coffee',
-      attributes: [
-        'name',
-        'producer',
-        'variety'
-      ]
-    }
-    const validates = {
-      name: { required: true },
-      producer: { required: true }
-    }
     let wrapper
     beforeEach(() => {
       wrapper = mount(CGNewResourceForm, {
@@ -211,22 +199,10 @@ describe('CGNewResourceForm.vue', () => {
   })
   describe('computed properties', () => {
     describe('authHeaders', () => {
-      const store = new Vuex.Store({
-        modules: { Sessions }
-      })
       it('maps the authHeaders getter from the vuex store', () => {
         const wrapper = mount(CGNewResourceForm, {
           store,
-          propsData: {
-            model: {
-              name: 'roaster',
-              attributes: [
-                'name',
-                'location',
-                'website'
-              ]
-            }
-          }
+          propsData: { model }
         })
         // check for initial values match
         expect(wrapper.vm.authHeaders)
@@ -242,21 +218,6 @@ describe('CGNewResourceForm.vue', () => {
     })
   })
   describe('methods', () => {
-    const store = new Vuex.Store({
-      modules: { Sessions }
-    })
-    const model = {
-      name: 'coffee',
-      attributes: [
-        'name',
-        'producer',
-        'variety'
-      ]
-    }
-    const validates = {
-      name: { required: true },
-      producer: { required: true }
-    }
     let wrapper
     beforeEach(() => {
       wrapper = mount(CGNewResourceForm, {
