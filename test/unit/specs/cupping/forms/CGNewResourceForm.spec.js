@@ -139,16 +139,7 @@ describe('CGNewResourceForm.vue', () => {
     let wrapper
     beforeEach(() => {
       wrapper = mount(CGNewResourceForm, {
-        propsData: {
-          model: {
-            name: 'roaster',
-            attributes: [
-              'name',
-              'location',
-              'website'
-            ]
-          }
-        }
+        propsData: { model }
       })
     })
     it("has an Object type 'form' property", () => {
