@@ -156,13 +156,14 @@ export default {
       })
         .then(response => {
           this.$emit(`${this.model.name}Created`, response.data)
+          this.clearForm()
         })
         .catch(error => {
-          error.response.data
-            .forEach(e => Toast.create({
-              html: e,
-              icon: 'error_outline'
-            }))
+          console.log(error.response)
+          Toast.create({
+            html: error.response.data.message,
+            icon: 'error_outline'
+          })
         })
     },
     clearForm () {
