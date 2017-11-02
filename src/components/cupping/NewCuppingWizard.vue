@@ -13,6 +13,10 @@
         :sublabel="'username'"
         @itemSelected="test"
       />
+      <c-g-new-resource-form
+        :model="coffeeModel"
+        :validates="coffeeValidations"
+      />
       <q-stepper-navigation class="row justify-center">
         <q-btn
           v-if="cuppingCreated"
@@ -33,6 +37,7 @@
 <script>
 import CuppingForm from './forms/CuppingForm'
 import CGAutocomplete from './forms/CGAutocomplete'
+import CGNewResourceForm from './forms/CGNewResourceForm'
 import {
   QStepper,
   QStep,
@@ -44,6 +49,7 @@ export default {
   components: {
     CuppingForm,
     CGAutocomplete,
+    CGNewResourceForm,
     QStepper,
     QStep,
     QStepperNavigation,
@@ -51,7 +57,21 @@ export default {
   },
   data () {
     return {
-      cuppingCreated: false
+      cuppingCreated: false,
+      coffeeModel: {
+        name: 'coffee',
+        attributes: [
+          'name',
+          'origin',
+          'producer',
+          'variety'
+        ]
+      },
+      coffeeValidations: {
+        name: { required: true },
+        origin: { required: true },
+        producer: { required: true }
+      }
     }
   },
   methods: {
