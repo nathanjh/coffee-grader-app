@@ -220,9 +220,6 @@ describe('CGNewResourceForm.vue', () => {
       })
     })
     describe('errorClassCheck', () => {
-      it('is a function', () => {
-        expect(wrapper.vm.errorClassCheck).to.be.a('function')
-      })
       context("given a String type attribute included in 'validates' prop object", () => {
         it('returns a boolean value', () => {
           const attrs = Object.keys(validates)
@@ -240,9 +237,6 @@ describe('CGNewResourceForm.vue', () => {
       })
     })
     describe('errorMessageCheck', () => {
-      it('is a function', () => {
-        expect(wrapper.vm.errorMessageCheck).to.be.a('function')
-      })
       context("given a String type attribute included in 'validates' prop object", () => {
         it('returns the correct error message', () => {
           // 'name' is included in the 'validates' prop
@@ -258,9 +252,6 @@ describe('CGNewResourceForm.vue', () => {
       })
     })
     describe('touchIfValidates', () => {
-      it('is a function', () => {
-        expect(wrapper.vm.touchIfValidates).to.be.a('function')
-      })
       context("given a String type attribute included in 'validates'", () => {
         it("sets the '$dirty' flag on the correct form field", () => {
           // 'producer' is included in the 'validates' prop
@@ -309,9 +300,6 @@ describe('CGNewResourceForm.vue', () => {
       })
     })
     describe('createResource', () => {
-      it('is a function', () => {
-        expect(CGNewResourceForm.methods.createResource).to.be.a('function')
-      })
       let apiCall
       const coffeeData = {
         coffee: {
@@ -397,9 +385,6 @@ describe('CGNewResourceForm.vue', () => {
       })
     })
     describe('clearForm', () => {
-      it('is a function', () => {
-        expect(wrapper.vm.clearForm).to.be.a('function')
-      })
       beforeEach(() => {
         wrapper.setData({
           form: {
