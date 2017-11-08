@@ -7,6 +7,9 @@ export const context = {
       headers: {
         uid: null
       }
+    },
+    cupping: {
+      id: 1
     }
   },
   rootState: {

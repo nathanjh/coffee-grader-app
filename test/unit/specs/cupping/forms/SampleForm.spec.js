@@ -63,6 +63,12 @@ describe('SampleForm.vue', () => {
           assert(submitSampleButton.is('button'))
           expect(submitSampleButton.text()).to.include('Submit')
         })
+        it('form submit button calls createSample method on click', () => {
+          const createSampleHandler = sinon.spy(wrapper.vm, 'createSample')
+          submitSampleButton.trigger('click')
+          assert(createSampleHandler.calledOnce)
+          createSampleHandler.restore()
+        })
       })
     })
   })

@@ -139,6 +139,7 @@
           float-label="Coffee Alias"
           v-model="form.coffeeAlias"
           color="amber"
+          :clearable="true"
         />
       </q-field>
       <label
@@ -147,6 +148,17 @@
       >
         choose an alias for blind cuppings
       </label>
+    </div>
+    <div class="row justify-end" style="padding-right: 5px;">
+        <q-btn
+          class="col-2"
+          :outline="true"
+          data-button-type="submit-new-sample"
+          @click.prevent="createSample"
+          color="grey-7"
+        >
+          Submit
+        </q-btn>
     </div>
   </div>
 </template>
@@ -250,7 +262,8 @@ export default {
       this.$refs[`${context}Autocomplete`].clearInput()
       this[`${context}NotFound`] = false
     },
-    formatDate
+    formatDate,
+    createSample () {}
   }
 }
 </script>

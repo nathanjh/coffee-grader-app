@@ -1,6 +1,11 @@
 <template lang="html">
   <div>
-    <q-input color="amber" v-model="terms" :float-label="model">
+    <q-input
+      color="amber"
+      v-model="terms"
+      :float-label="model"
+      :clearable="true"
+    >
       <q-autocomplete
       @search="search"
       :min-characters="3"

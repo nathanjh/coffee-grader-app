@@ -33,6 +33,28 @@ export const actions = api => ({
           reject(error.response.data)
         })
     })
+  },
+  newSample ({ state, commit, rootState }, form) {
+    console.log(state.cupping)
+    return new Promise((resolve, reject) => {
+      api.post(`cuppings/${state.cupping.id}/cupped_coffees.json`, {
+        roast_date: form.roastDate,
+        coffee_alias: form.coffeeAlias,
+        coffee_id: form.coffeeId,
+        roaster_id: form.roasterId,
+        cupping_id: state.cupping.id
+      }, {
+        headers: rootState.sessions.auth.headers
+      })
+        .then(response => {
+          commit('addSample', response.data.cuppedCoffee)
+          resolve(response.data.cuppedCoffee)
+        })
+        .catch(error => {
+          console.log(error.response.data)
+          reject(error.response.data)
+        })
+    })
   }
 })
 
