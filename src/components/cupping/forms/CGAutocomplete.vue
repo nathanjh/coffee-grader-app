@@ -1,13 +1,13 @@
 <template lang="html">
   <div>
-    <q-search color="amber" v-model="terms" :float-label="model">
+    <q-input color="amber" v-model="terms" :float-label="model">
       <q-autocomplete
       @search="search"
       :min-characters="3"
       @selected="selected"
-      :debounce="1000"
+      :debounce="500"
       />
-    </q-search>
+    </q-input>
   </div>
 </template>
 
@@ -18,6 +18,7 @@ import { mapGetters } from 'vuex'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import {
   QSearch,
+  QInput,
   QAutocomplete
 } from 'quasar'
 
@@ -25,6 +26,7 @@ export default {
   name: 'CGAutocomplete',
   components: {
     QSearch,
+    QInput,
     QAutocomplete
   },
   props: {

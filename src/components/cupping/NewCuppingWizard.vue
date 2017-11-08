@@ -8,7 +8,7 @@
         @newCuppingCreated="cuppingCreated = true"
         data-form-type="cupping-form"
       />
-      <c-g-autocomplete
+      <!-- <c-g-autocomplete
         :model="'user'"
         :sublabel="'username'"
         @itemSelected="test"
@@ -16,7 +16,7 @@
       <c-g-new-resource-form
         :model="coffeeModel"
         :validates="coffeeValidations"
-      />
+      /> -->
       <q-stepper-navigation class="row justify-center">
         <q-btn
           v-if="cuppingCreated"

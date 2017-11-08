@@ -53,6 +53,17 @@ describe('SampleForm.vue', () => {
           })
         })
       })
+      describe('form submit button', () => {
+        let submitSampleButton
+        beforeEach(() => {
+          submitSampleButton =
+            wrapper.find('[data-button-type="submit-new-sample"]')
+        })
+        it('renders a form submit button', () => {
+          assert(submitSampleButton.is('button'))
+          expect(submitSampleButton.text()).to.include('Submit')
+        })
+      })
     })
   })
   describe('data', () => {
@@ -208,27 +219,6 @@ describe('SampleForm.vue', () => {
         expect(roasterNotFound).to.equal(false)
       })
     })
-    describe('coffeeInfo', () => {
-      it('is an object with name and origin keys', () => {
-        const coffeeInfo =
-          mount(SampleForm, { store })
-            .vm.coffeeInfo
-        expect(['name', 'origin']
-          .every(key => Object.keys(coffeeInfo).includes(key)))
-          .to.be.true
-
-      })
-    })
-    describe('roasterInfo', () => {
-      it('is an object with name and origin keys', () => {
-        const roasterInfo =
-          mount(SampleForm, { store })
-            .vm.roasterInfo
-        expect(['name', 'origin']
-          .every(key => Object.keys(roasterInfo).includes(key)))
-          .to.be.true
-      })
-    })
   })
   describe('child components', () => {
     it('has a CGAutocomplete child component', () => {
@@ -267,16 +257,6 @@ describe('SampleForm.vue', () => {
           }
           wrapper.vm.itemSelectedHandler('coffee', payload)
           expect(wrapper.vm.form.coffeeId).to.equal(payload.id)
-        })
-        it('sets the coffeeInfo data property', () => {
-          const payload = {
-            id: 1,
-            label: 'test-coffee',
-            sublabel: 'test-origin'
-          }
-          wrapper.vm.itemSelectedHandler('coffee', payload)
-          expect(wrapper.vm.coffeeInfo.name).to.equal(payload.label)
-          expect(wrapper.vm.coffeeInfo.origin).to.equal(payload.sublabel)
         })
       })
     })
@@ -319,13 +299,6 @@ describe('SampleForm.vue', () => {
           assert(wrapper.vm.coffeeNotFound)
           wrapper.vm.resourceCreatedHandler('coffee', payload)
           expect(wrapper.vm.coffeeNotFound).to.equal(false)
-        })
-        it('sets the coffeeInfo data property', () => {
-          wrapper.vm.resourceCreatedHandler('coffee', payload)
-          expect(wrapper.vm.coffeeInfo.name)
-            .to.equal(payload.coffee.name)
-          expect(wrapper.vm.coffeeInfo.origin)
-            .to.equal(payload.coffee.origin)
         })
       })
     })

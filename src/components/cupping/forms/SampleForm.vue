@@ -1,43 +1,5 @@
 <template lang="html">
   <div>
-    <!-- render a summary list instead of this spanny nonsense -->
-    <q-slide-transition>
-      <q-list
-      class="fixed-bottom"
-      :multiline="true"
-      :dense="true"
-      v-if="form.coffeeId"
-      >
-        <q-list-header>Summary</q-list-header>
-        <q-item v-if="coffeeInfo.name">
-          <q-item-side class="text-grey-7">
-            Coffee:
-          </q-item-side>
-          <q-item-main class="text-italic text-grey-7">
-            {{ coffeeInfo.name }} ({{ coffeeInfo.origin }})
-          </q-item-main>
-        </q-item>
-        <q-item v-if="roasterInfo.name">
-          <q-item-side class="text-grey-7">
-            Roasted by:
-          </q-item-side>
-          <q-item-main class="text-italic text-grey-7">
-            {{ roasterInfo.name }} ({{ roasterInfo.origin }})
-          </q-item-main>
-        </q-item>
-        <q-item v-if="form.roastDate">
-          <span class="text-italic text-grey-7">
-            On: {{ form.roastDate }}
-          </span>
-        </q-item>
-        <q-item v-if="form.coffeeAlias">
-          <span class="text-italic text-grey-7">
-            As:
-          </span>
-          {{ form.coffeeAlias }}
-        </q-item>
-      </q-list>
-    </q-slide-transition>
     <q-field>
       <c-g-autocomplete
         id="coffee-autocomplete"
@@ -68,7 +30,11 @@
         </div>
       </label>
     </q-field>
-    <q-modal ref="coffeeModal" :content-css="{minHeight: '72vh', minWidth: '50vw'}">
+    <q-modal
+      ref="coffeeModal"
+      :content-css="{minHeight: '72vh', minWidth: '50vw'}"
+      @close="$refs.newCoffeeForm.clearForm()"
+    >
       <q-modal-layout>
         <q-toolbar slot="header" class="bg-light text-teal-5">
           <div class="q-toolbar-title text-center">
@@ -82,6 +48,7 @@
           />
         </q-toolbar>
         <c-g-new-resource-form
+          ref="newCoffeeForm"
           :model="newCoffeeProps.model"
           :validates="newCoffeeProps.validations"
           @coffeeCreated="resourceCreatedHandler('coffee', $event)"
@@ -118,7 +85,11 @@
         </div>
       </label>
     </q-field>
-    <q-modal ref="roasterModal" :content-css="{minHeight: '72vh', minWidth: '50vw'}">
+    <q-modal
+      ref="roasterModal"
+      :content-css="{minHeight: '72vh', minWidth: '50vw'}"
+      @close="$refs.newRoasterForm.clearForm()"
+    >
       <q-modal-layout>
         <q-toolbar slot="header" class="bg-light text-teal-5">
           <div class="q-toolbar-title text-center">
@@ -132,13 +103,51 @@
           />
         </q-toolbar>
         <c-g-new-resource-form
+          ref="newRoasterForm"
           :model="newRoasterProps.model"
           :validates="newRoasterProps.validations"
           @roasterCreated="resourceCreatedHandler('roaster', $event)"
         />
       </q-modal-layout>
     </q-modal>
-
+    <div class="row">
+      <q-field
+        class="col-12"
+        data-field-type="roast-date"
+        id="roast-date"
+      >
+        <q-datetime
+          type="date"
+          v-model="form.roastDate"
+          float-label="Roast Date"
+          format="dddd, MMM D YYYY"
+          color="amber"
+        />
+      </q-field>
+      <label
+        for="roast-date"
+        class="text-grey-7 text-italic"
+      >
+        select a roast date
+      </label>
+      <q-field
+        class="col-12"
+        data-field-type="alias"
+        id="coffee-alias"
+      >
+        <q-input
+          float-label="Coffee Alias"
+          v-model="form.coffeeAlias"
+          color="amber"
+        />
+      </q-field>
+      <label
+        for="coffee-alias"
+        class="text-grey-7 text-italic"
+      >
+        choose an alias for blind cuppings
+      </label>
+    </div>
   </div>
 </template>
 
@@ -146,8 +155,10 @@
 import CGAutocomplete from './CGAutocomplete'
 import CGNewResourceForm from './CGNewResourceForm'
 import {
+  date,
   Toast,
   QField,
+  QInput,
   QModal,
   QModalLayout,
   QToolbar,
@@ -156,15 +167,19 @@ import {
   QItem,
   QItemSide,
   QItemMain,
+  QDatetime,
   QBtn,
   QSlideTransition
 } from 'quasar'
+
+const { formatDate } = date
 
 export default {
   components: {
     CGAutocomplete,
     CGNewResourceForm,
     QField,
+    QInput,
     QModal,
     QModalLayout,
     QToolbar,
@@ -173,6 +188,7 @@ export default {
     QItem,
     QItemSide,
     QItemMain,
+    QDatetime,
     QBtn,
     QSlideTransition
   },
@@ -216,15 +232,7 @@ export default {
         }
       },
       coffeeNotFound: false,
-      roasterNotFound: false,
-      coffeeInfo: {
-        name: '',
-        origin: ''
-      },
-      roasterInfo: {
-        name: '',
-        origin: ''
-      }
+      roasterNotFound: false
     }
   },
   methods: {
@@ -232,8 +240,6 @@ export default {
       this[`${context}NotFound`] = false
       if (payload && payload.id) {
         this.form[`${context}Id`] = payload.id
-        this[`${context}Info`].name = payload.label
-        this[`${context}Info`].origin = payload.sublabel
       }
     },
     resourceCreatedHandler (context, payload) {
@@ -243,11 +249,8 @@ export default {
         .positive(`Successfully added ${payload[context].name}!`)
       this.$refs[`${context}Autocomplete`].clearInput()
       this[`${context}NotFound`] = false
-      // set the info data property
-      this[`${context}Info`].name = payload[context].name
-      this[`${context}Info`].origin =
-        payload[context].origin || payload[context].location
-    }
+    },
+    formatDate
   }
 }
 </script>
