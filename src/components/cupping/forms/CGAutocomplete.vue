@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <q-search color="amber" v-model="terms" :placeholder="model">
+    <q-search color="amber" v-model="terms" :float-label="model">
       <q-autocomplete
       @search="search"
       :min-characters="3"
@@ -58,7 +58,10 @@ export default {
         return {
           label: item.name,
           sublabel: item[sublabel],
-          value: item.name,
+          value: (function () {
+            return item[sublabel] ? `${item.name} (${item[sublabel]})`
+              : item.name
+          })(),
           id: item.id
         }
       })
