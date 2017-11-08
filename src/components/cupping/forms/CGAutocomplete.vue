@@ -82,6 +82,9 @@ export default {
     selected (item) {
       console.log(item)
       this.$emit('itemSelected', item)
+    },
+    clearInput () {
+      this.terms = ''
     }
   }
 }
