@@ -17,8 +17,8 @@ const apiResponse = {
     },
     cuppedCoffee: {
       id: 2,
-      roast_date: "2017-07-16T22:52:23.155Z",
-      coffee_alias: "6-241",
+      roast_date: '2017-07-16T22:52:23.155Z',
+      coffee_alias: '6-241',
       coffee_id: 19,
       roaster_id: 3,
       cupping_id: 6

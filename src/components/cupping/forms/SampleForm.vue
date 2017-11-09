@@ -119,7 +119,7 @@
         <q-datetime
           type="date"
           v-model="form.roastDate"
-          float-label="Roast Date"
+          float-label="roast date"
           format="dddd, MMM D YYYY"
           color="amber"
         />
@@ -136,7 +136,7 @@
         id="coffee-alias"
       >
         <q-input
-          float-label="Coffee Alias"
+          float-label="coffee alias"
           v-model="form.coffeeAlias"
           color="amber"
           :clearable="true"
@@ -164,6 +164,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import CGAutocomplete from './CGAutocomplete'
 import CGNewResourceForm from './CGNewResourceForm'
 import {
@@ -210,8 +211,7 @@ export default {
         roastDate: null,
         coffeeAlias: '',
         coffeeId: null,
-        roasterId: null,
-        cuppingId: this.$store.getters.cupping.id
+        roasterId: null
       },
       newCoffeeProps: {
         model: {
@@ -248,6 +248,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      submitNewSample: 'newSample'
+    }),
     itemSelectedHandler (context, payload) {
       this[`${context}NotFound`] = false
       if (payload && payload.id) {
@@ -263,7 +266,26 @@ export default {
       this[`${context}NotFound`] = false
     },
     formatDate,
-    createSample () {}
+    createSample () {
+      // handle validation errors
+      this.submitNewSample(this.form)
+        .then(response => {
+          console.log(response)
+          this.$emit('newSampleAdded')
+          this.clearAllFields()
+          Toast.create
+            .positive('Successfully added sample')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    clearAllFields () {
+      this.$refs.coffeeAutocomplete.clearInput()
+      this.$refs.roasterAutocomplete.clearInput()
+      this.form.roastDate = ''
+      this.form.coffeeAlias = ''
+    }
   }
 }
 </script>

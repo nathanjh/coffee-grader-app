@@ -3,23 +3,13 @@ import SampleForm from '@/cupping/forms/SampleForm'
 import CGAutocomplete from '@/cupping/forms/CGAutocomplete'
 import CGNewResourceForm from '@/cupping/forms/CGNewResourceForm'
 import { mount } from 'vue-test-utils'
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Cupping from 'src/store/modules/cupping'
 import { Toast } from 'quasar'
 
-Vue.use(Vuex)
-
 describe('SampleForm.vue', () => {
-  // make a store available to all unit tests
-  const store = new Vuex.Store({
-    modules: { Cupping }
-  })
-
   describe('rendered content', () => {
     let wrapper
     beforeEach(() => {
-      wrapper = mount(SampleForm, { store })
+      wrapper = mount(SampleForm)
     })
     describe('coffee autocomplete message', () => {
       context('when no coffee is found', () => {
@@ -64,7 +54,7 @@ describe('SampleForm.vue', () => {
           expect(submitSampleButton.text()).to.include('Submit')
         })
         it('form submit button calls createSample method on click', () => {
-          const createSampleHandler = sinon.spy(wrapper.vm, 'createSample')
+          const createSampleHandler = sinon.stub(wrapper.vm, 'createSample')
           submitSampleButton.trigger('click')
           assert(createSampleHandler.calledOnce)
           createSampleHandler.restore()
@@ -74,26 +64,19 @@ describe('SampleForm.vue', () => {
   })
   describe('data', () => {
     it('has an Object type form property', () => {
-      const wrapper = mount(SampleForm, { store })
-      expect(wrapper.vm.form).to.be.a('object')
+      expect(SampleForm.data().form).to.be.a('object')
     })
     describe('form', () => {
-      let wrapper, form
+      let form
       beforeEach(() => {
-        /* cupping must exist for samples to be added, therefore, we will
-           always have a cupping object in the store to initialize our
-           cuppingId data property */
-        store.commit('updateCupping', { id: 1 })
-        wrapper = mount(SampleForm, { store })
-        form = wrapper.vm.form
+        form = SampleForm.data().form
       })
       it('form object has the correct keys', () => {
         const keys = [
           'roastDate',
           'coffeeAlias',
           'coffeeId',
-          'roasterId',
-          'cuppingId'
+          'roasterId'
         ]
         expect(Object.keys(form)).to.deep.equal(keys)
       })
@@ -111,17 +94,11 @@ describe('SampleForm.vue', () => {
           .every(key => form[key] === null))
           .to.be.true
       })
-      it('has a number type cuppingId property with initial value', () => {
-        expect(form.cuppingId).not.to.be.null
-        expect(form.cuppingId).to.be.a('number')
-        expect(form.cuppingId).to.equal(1)
-      })
     })
     describe('newCoffeeProps', () => {
-      let wrapper, newCoffeeProps
+      let newCoffeeProps
       beforeEach(() => {
-        wrapper = mount(SampleForm, { store })
-        newCoffeeProps = wrapper.vm.newCoffeeProps
+        newCoffeeProps = SampleForm.data().newCoffeeProps
       })
       it('is an object that contains the model and validations objects', () => {
         expect(['model', 'validations']
@@ -164,10 +141,9 @@ describe('SampleForm.vue', () => {
       })
     })
     describe('newRoasterProps', () => {
-      let wrapper, newRoasterProps
+      let newRoasterProps
       beforeEach(() => {
-        wrapper = mount(SampleForm, { store })
-        newRoasterProps = wrapper.vm.newRoasterProps
+        newRoasterProps = SampleForm.data().newRoasterProps
       })
       it('is an object that contains the coffeeModel and coffeeValidations objects', () => {
         expect(['model', 'validations']
@@ -211,17 +187,13 @@ describe('SampleForm.vue', () => {
     })
     describe('coffeeNotFound', () => {
       it('is a boolean type with default value of false', () => {
-        const coffeeNotFound =
-          mount(SampleForm, { store })
-            .vm.coffeeNotFound
+        const coffeeNotFound = SampleForm.data().coffeeNotFound
         expect(coffeeNotFound).to.equal(false)
       })
     })
     describe('roasterNotFound', () => {
       it('is a boolean type with default value of false', () => {
-        const roasterNotFound =
-          mount(SampleForm, { store })
-            .vm.roasterNotFound
+        const roasterNotFound = SampleForm.data().roasterNotFound
         expect(roasterNotFound).to.equal(false)
       })
     })
@@ -243,7 +215,7 @@ describe('SampleForm.vue', () => {
   describe('methods', () => {
     let wrapper
     beforeEach(() => {
-      wrapper = mount(SampleForm, { store })
+      wrapper = mount(SampleForm)
     })
     /* only testing coffee associated handlers, as roaster handlers
        function exactly the same way, but use different props data */
@@ -306,6 +278,64 @@ describe('SampleForm.vue', () => {
           wrapper.vm.resourceCreatedHandler('coffee', payload)
           expect(wrapper.vm.coffeeNotFound).to.equal(false)
         })
+      })
+    })
+    describe('vuex actions', () => {
+      it("maps newSample action to local 'submitNewSample' method", () => {
+        expect(wrapper.vm.submitNewSample).to.be.a('function')
+      })
+    })
+    describe('createSample', () => {
+      let actionSpy
+      beforeEach(() => {
+        actionSpy =
+          sinon.stub(wrapper.vm, 'submitNewSample')
+            .returns(Promise.resolve({}))
+      })
+      afterEach(() => actionSpy.restore())
+      context('when submitNewSample is successful', () => {
+        it('emits a newSampleAdded event', async function () {
+          const spy = sinon.spy()
+          wrapper.vm.$on('newSampleAdded', spy)
+          await wrapper.vm.createSample()
+          assert(spy.called)
+        })
+        it('calls the clearAllFields method', async function () {
+          const spy = sinon.spy(wrapper.vm, 'clearAllFields')
+          await wrapper.vm.createSample()
+          assert(spy.called)
+        })
+        it('creates a toast to communicate success to the user', async function () {
+          const toastSpy = sinon.spy(Toast.create, 'positive')
+          await wrapper.vm.createSample()
+          assert(toastSpy.calledOnce)
+          toastSpy.restore()
+        })
+      })
+    })
+    describe('clearAllFields', () => {
+      it('clears the autocomplete component form fields by calling their clearInput method', () => {
+        wrapper.findAll(CGAutocomplete)
+          .wrappers.forEach((cmp, idx) => {
+            const spy = sinon.spy(cmp.vm, 'clearInput')
+            wrapper.vm.clearAllFields()
+            expect(spy.called).to.be.true
+            spy.restore()
+          })
+      })
+      it('clears the roastDate and coffeeAlias fields by resetting data properties', () => {
+        wrapper.setData({
+          form: {
+            roastDate: '2017-11-29',
+            coffeeAlias: 'sample A'
+          }
+        })
+        assert(wrapper.vm.form.roastDate === '2017-11-29')
+        assert(wrapper.vm.form.coffeeAlias === 'sample A')
+
+        wrapper.vm.clearAllFields()
+        expect(wrapper.vm.form.roastDate).to.equal('')
+        expect(wrapper.vm.form.coffeeAlias).to.equal('')
       })
     })
   })

@@ -30,6 +30,9 @@
     <q-step
       title="let's all add some samples for the best fun"
     >
+      <sample-form
+        @newSampleAdded="test('woot')"
+      />
     </q-step>
   </q-stepper>
 </template>
@@ -38,6 +41,7 @@
 import CuppingForm from './forms/CuppingForm'
 import CGAutocomplete from './forms/CGAutocomplete'
 import CGNewResourceForm from './forms/CGNewResourceForm'
+import SampleForm from './forms/SampleForm'
 import {
   QStepper,
   QStep,
@@ -48,6 +52,7 @@ import {
 export default {
   components: {
     CuppingForm,
+    SampleForm,
     CGAutocomplete,
     CGNewResourceForm,
     QStepper,
@@ -75,7 +80,7 @@ export default {
     }
   },
   methods: {
-    test (thing) { console.log(thing.id) }
+    test (thing) { console.log(thing) }
   }
 }
 </script>
