@@ -1,13 +1,18 @@
 <template lang="html">
   <div>
-    <q-search color="amber" v-model="terms" :placeholder="model">
+    <q-input
+      color="amber"
+      v-model="terms"
+      :float-label="model"
+      :clearable="true"
+    >
       <q-autocomplete
       @search="search"
       :min-characters="3"
       @selected="selected"
-      :debounce="1000"
+      :debounce="500"
       />
-    </q-search>
+    </q-input>
   </div>
 </template>
 
@@ -18,6 +23,7 @@ import { mapGetters } from 'vuex'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import {
   QSearch,
+  QInput,
   QAutocomplete
 } from 'quasar'
 
@@ -25,6 +31,7 @@ export default {
   name: 'CGAutocomplete',
   components: {
     QSearch,
+    QInput,
     QAutocomplete
   },
   props: {
@@ -58,7 +65,10 @@ export default {
         return {
           label: item.name,
           sublabel: item[sublabel],
-          value: item.name,
+          value: (function () {
+            return item[sublabel] ? `${item.name} (${item[sublabel]})`
+              : item.name
+          })(),
           id: item.id
         }
       })
@@ -82,6 +92,9 @@ export default {
     selected (item) {
       console.log(item)
       this.$emit('itemSelected', item)
+    },
+    clearInput () {
+      this.terms = ''
     }
   }
 }

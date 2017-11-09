@@ -1,3 +1,4 @@
+// import 'babel-polyfill'
 import { actions } from 'src/store/modules/cupping'
 import { api, context } from '../helpers'
 
@@ -13,13 +14,21 @@ const apiResponse = {
       cuppedCoffees: [],
       scores: [],
       invites: []
+    },
+    cuppedCoffee: {
+      id: 2,
+      roast_date: '2017-07-16T22:52:23.155Z',
+      coffee_alias: '6-241',
+      coffee_id: 19,
+      roaster_id: 3,
+      cupping_id: 6
     }
   }
 }
 
 const mockCuppingApi = api(apiResponse)
 
-const { newCupping } = actions(mockCuppingApi)
+const { newCupping, newSample } = actions(mockCuppingApi)
 
 describe('cupping module: actions', () => {
   describe('newCupping', () => {
@@ -40,6 +49,19 @@ describe('cupping module: actions', () => {
           done()
         })
         .catch(e => done(e))
+    })
+  })
+  describe('newSample', () => {
+    it("commits 'addSample' mutation with expected payload", async function () {
+      const spy = sinon.spy(context, 'commit')
+      await newSample(context, {})
+      expect(spy.calledWith('addSample', apiResponse.data.cuppedCoffee))
+        .to.be.true
+      spy.restore()
+    })
+    it('returns a promise that resolves to a cuppedCoffee object', async function () {
+      const response = await newSample(context, {})
+      expect(response).to.deep.equal(apiResponse.data.cuppedCoffee)
     })
   })
 })

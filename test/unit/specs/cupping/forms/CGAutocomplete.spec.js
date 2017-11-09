@@ -199,5 +199,19 @@ describe('CGAutocomplete.vue', () => {
         })
       })
     })
+    describe('clearInput', () => {
+      it('sets the input value to an empty string', () => {
+        const wrapper = mount(CGAutocomplete, {
+          propsData: {
+            model: 'coffee',
+            sublabel: 'origin'
+          }
+        })
+        wrapper.setData({ terms: 'test' })
+        wrapper.vm.clearInput()
+
+        expect(wrapper.vm.terms).to.equal('')
+      })
+    })
   })
 })

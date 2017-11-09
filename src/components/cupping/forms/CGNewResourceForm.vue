@@ -1,8 +1,5 @@
 <template lang="html">
   <q-card>
-    <q-card-title align="center">
-      Add a new {{ model.name }}
-    </q-card-title>
     <q-card-main>
       <q-field
         v-for="(value, attr, index) in form"
@@ -28,7 +25,7 @@
         Submit
       </q-btn>
       <q-btn
-        color="teal"
+        color="teal-5"
         flat
         class="col-2"
         data-button-type="clear-form"

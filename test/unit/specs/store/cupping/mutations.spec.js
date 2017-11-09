@@ -1,5 +1,9 @@
 import { mutations } from 'src/store/modules/cupping'
-const { updateCupping, clearCupping } = mutations
+const {
+  updateCupping,
+  clearCupping,
+  addSample
+} = mutations
 
 describe('cupping module: mutations', () => {
   const initialState = () => ({
@@ -16,6 +20,14 @@ describe('cupping module: mutations', () => {
     scores: [],
     invites: []
   }
+  const cuppedCoffee = {
+    id: 2,
+    roast_date: '2017-07-16T22:52:23.155Z',
+    coffee_alias: '6-241',
+    coffee_id: 19,
+    roaster_id: 3,
+    cupping_id: 6
+  }
   describe('updateCupping', () => {
     it('mutates the cupping property', () => {
       const state = initialState()
@@ -30,6 +42,17 @@ describe('cupping module: mutations', () => {
       expect(state.cupping).to.deep.equal(cupping)
       clearCupping(state)
       expect(state.cupping).to.deep.equal({})
+    })
+  })
+  describe('addSample', () => {
+    it("adds a cuppedCoffee (or 'sample') to the cuppings cuppedCoffees collection", () => {
+      const state = initialState()
+      // first add a cupping...
+      updateCupping(state, cupping)
+      assert(state.cupping.cuppedCoffees.length === 0)
+      addSample(state, cuppedCoffee)
+      expect(state.cupping.cuppedCoffees.length).to.equal(1)
+      expect(state.cupping.cuppedCoffees[0]).to.deep.equal(cuppedCoffee)
     })
   })
 })
