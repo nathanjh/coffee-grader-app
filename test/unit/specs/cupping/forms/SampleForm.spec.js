@@ -326,7 +326,7 @@ describe('SampleForm.vue', () => {
             .returns(Promise.resolve({}))
       })
       afterEach(() => actionSpy.restore())
-      describe('validates from input for errors', () => {
+      describe('validates form input for errors', () => {
         it('sets all form fields to dirty to check for empty inputs', () => {
           wrapper.vm.createSample()
           expect(wrapper.vm.$v.form.$dirty).to.be.true
