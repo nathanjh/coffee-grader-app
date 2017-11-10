@@ -301,7 +301,7 @@ export default {
           this.$emit('newSampleAdded')
           this.clearAllFields()
           Toast.create
-            .positive('Successfully added sample')
+            .positive("Successfully added sample. Feel free to add as many as you'd like!")
         })
         .catch(error => {
           console.log(error)
