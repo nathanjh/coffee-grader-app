@@ -5,6 +5,8 @@
       v-model="terms"
       :float-label="model"
       :clearable="true"
+      @change="notifyIfCleared"
+      :data-input-type="model"
     >
       <q-autocomplete
       @search="search"
@@ -95,6 +97,10 @@ export default {
     },
     clearInput () {
       this.terms = ''
+    },
+    notifyIfCleared (val) {
+      if (val !== '') return
+      this.$emit('inputCleared')
     }
   }
 }

@@ -1,6 +1,10 @@
 <template lang="html">
   <div>
-    <q-field>
+    <q-field
+      data-field-type="coffee"
+      :error="$v.form.coffeeId.$error"
+      :error-label="requiredMessage($v.form.coffeeId, 'coffee')"
+    >
       <c-g-autocomplete
         id="coffee-autocomplete"
         ref="coffeeAutocomplete"
@@ -9,27 +13,28 @@
         :sublabel="'origin'"
         @itemSelected="itemSelectedHandler('coffee', $event)"
         @noResults="coffeeNotFound = true"
+        @inputCleared="form.coffeeId = null"
       />
-      <label
-        for="coffee-autocomplete"
-        class="text-grey-7 text-italic"
-      >
-        <div v-if="coffeeNotFound">
-          couldn't find that coffee...
-          <span>
-            <a
-              @click.prevent="$refs.coffeeModal.open()"
-              data-link-type="new-coffee"
-            >
-              click to add a new one
-            </a>
-          </span>
-        </div>
-        <div v-else>
-          find a coffee by name, origin, or producer
-        </div>
-      </label>
     </q-field>
+    <label
+      for="coffee-autocomplete"
+      class="text-grey-7 text-italic"
+    >
+      <div v-if="coffeeNotFound">
+        couldn't find that coffee...
+        <span>
+          <a
+            @click.prevent="$refs.coffeeModal.open()"
+            data-link-type="new-coffee"
+          >
+            click to add a new one
+          </a>
+        </span>
+      </div>
+      <div v-else>
+        find a coffee by name, origin, or producer
+      </div>
+    </label>
     <q-modal
       ref="coffeeModal"
       :content-css="{minHeight: '72vh', minWidth: '50vw'}"
@@ -55,7 +60,11 @@
         />
       </q-modal-layout>
     </q-modal>
-    <q-field>
+    <q-field
+      data-field-type="roaster"
+      :error="$v.form.roasterId.$error"
+      :error-label="requiredMessage($v.form.roasterId, 'roaster')"
+    >
       <c-g-autocomplete
         id="roaster-autocomplete"
         ref="roasterAutocomplete"
@@ -64,27 +73,28 @@
         :sublabel="'location'"
         @itemSelected="itemSelectedHandler('roaster', $event)"
         @noResults="roasterNotFound = true"
+        @inputCleared="form.roasterId = null"
       />
-      <label
-        for="roaster-autocomplete"
-        class="text-grey-7 text-italic"
-      >
-        <div v-if="roasterNotFound">
-          couldn't find that roaster...
-          <span>
-            <a
-              @click.prevent="$refs.roasterModal.open()"
-              data-link-type="new-roaster"
-            >
-              click to add a new one
-            </a>
-          </span>
-        </div>
-        <div v-else>
-          find a roaster by name or location
-        </div>
-      </label>
     </q-field>
+    <label
+      for="roaster-autocomplete"
+      class="text-grey-7 text-italic"
+    >
+      <div v-if="roasterNotFound">
+        couldn't find that roaster...
+        <span>
+          <a
+            @click.prevent="$refs.roasterModal.open()"
+            data-link-type="new-roaster"
+          >
+            click to add a new one
+          </a>
+        </span>
+      </div>
+      <div v-else>
+        find a roaster by name or location
+      </div>
+    </label>
     <q-modal
       ref="roasterModal"
       :content-css="{minHeight: '72vh', minWidth: '50vw'}"
@@ -112,9 +122,11 @@
     </q-modal>
     <div class="row">
       <q-field
+        id="roast-date"
         class="col-12"
         data-field-type="roast-date"
-        id="roast-date"
+        :error="$v.form.roastDate.$error"
+        :error-label="requiredMessage($v.form.roastDate, 'roast date')"
       >
         <q-datetime
           type="date"
@@ -165,6 +177,8 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { required } from 'vuelidate/lib/validators'
+import { validationMessages } from '@/mixins/validationMessages'
 import CGAutocomplete from './CGAutocomplete'
 import CGNewResourceForm from './CGNewResourceForm'
 import {
@@ -188,6 +202,8 @@ import {
 const { formatDate } = date
 
 export default {
+  name: 'SampleForm',
+  mixins: [validationMessages],
   components: {
     CGAutocomplete,
     CGNewResourceForm,
@@ -247,6 +263,13 @@ export default {
       roasterNotFound: false
     }
   },
+  validations: {
+    form: {
+      roastDate: { required },
+      coffeeId: { required },
+      roasterId: { required }
+    }
+  },
   methods: {
     ...mapActions({
       submitNewSample: 'newSample'
@@ -262,19 +285,23 @@ export default {
       this.$refs[`${context}Modal`].close()
       Toast.create
         .positive(`Successfully added ${payload[context].name}!`)
-      this.$refs[`${context}Autocomplete`].clearInput()
+      this.$refs[`${context}Autocomplete`].terms =
+        `${payload[context].name} (${payload[context].origin ||
+                                     payload[context].location})`
       this[`${context}NotFound`] = false
     },
     formatDate,
     createSample () {
-      // handle validation errors
+      this.$v.form.$touch()
+      if (this.$v.form.$error) return
+
       this.submitNewSample(this.form)
         .then(response => {
           console.log(response)
           this.$emit('newSampleAdded')
           this.clearAllFields()
           Toast.create
-            .positive('Successfully added sample')
+            .positive("Successfully added sample. Feel free to add as many as you'd like!")
         })
         .catch(error => {
           console.log(error)
@@ -283,8 +310,8 @@ export default {
     clearAllFields () {
       this.$refs.coffeeAutocomplete.clearInput()
       this.$refs.roasterAutocomplete.clearInput()
-      this.form.roastDate = ''
-      this.form.coffeeAlias = ''
+      for (const field in this.form) this.form[field] = ''
+      this.$v.form.$reset()
     }
   }
 }
