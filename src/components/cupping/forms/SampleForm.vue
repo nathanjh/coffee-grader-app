@@ -13,6 +13,7 @@
         :sublabel="'origin'"
         @itemSelected="itemSelectedHandler('coffee', $event)"
         @noResults="coffeeNotFound = true"
+        @inputCleared="form.coffeeId = null"
       />
     </q-field>
     <label
@@ -72,6 +73,7 @@
         :sublabel="'location'"
         @itemSelected="itemSelectedHandler('roaster', $event)"
         @noResults="roasterNotFound = true"
+        @inputCleared="form.roasterId = null"
       />
     </q-field>
     <label
@@ -283,7 +285,9 @@ export default {
       this.$refs[`${context}Modal`].close()
       Toast.create
         .positive(`Successfully added ${payload[context].name}!`)
-      this.$refs[`${context}Autocomplete`].clearInput()
+      this.$refs[`${context}Autocomplete`].terms =
+        `${payload[context].name} (${payload[context].origin ||
+                                     payload[context].location})`
       this[`${context}NotFound`] = false
     },
     formatDate,

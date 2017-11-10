@@ -298,12 +298,10 @@ describe('SampleForm.vue', () => {
           wrapper.vm.resourceCreatedHandler('coffee', payload)
           expect(wrapper.vm.form.coffeeId).to.equal(payload.coffee.id)
         })
-        it("calls the autocomplete child component's 'clearInput' method", () => {
-          const spy =
-            sinon.spy(wrapper.vm.$refs.coffeeAutocomplete, 'clearInput')
+        it("sets the autocomplete child component's 'terms' data property", () => {
           wrapper.vm.resourceCreatedHandler('coffee', payload)
-          expect(spy.calledOnce).to.be.true
-          spy.restore()
+          expect(wrapper.vm.$refs.coffeeAutocomplete.terms)
+            .to.equal(`${payload.coffee.name} (${payload.coffee.origin})`)
         })
         it('resets the coffeeNotFound property to false', () => {
           wrapper.setData({
