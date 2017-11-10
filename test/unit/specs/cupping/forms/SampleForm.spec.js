@@ -198,6 +198,41 @@ describe('SampleForm.vue', () => {
       })
     })
   })
+  describe('form validations (Vuelidate)', () => {
+    const form = SampleForm.validations.form
+
+    it('validates roastDate, coffeeId, and roasterId by requirement', () => {
+      expect(
+        ['roastDate', 'coffeeId', 'roasterId'].every(k => {
+          return Object.keys(form[k]).includes('required')
+        })).to.be.true
+    })
+    describe('sets the error class for invalid fields', () => {
+      let wrapper
+      beforeEach(() => {
+        wrapper = mount(SampleForm)
+        wrapper.vm.$v.form.$touch()
+      })
+      it('for invalid roastDate', async function () {
+        await wrapper.update()
+        const roastDateField =
+          wrapper.find('[data-field-type="roast-date"]')
+        assert(roastDateField.hasClass('q-field-with-error'))
+      })
+      it('for invalid coffeeId', async function () {
+        await wrapper.update()
+        const coffeeField =
+          wrapper.find('[data-field-type="coffee"]')
+        assert(coffeeField.hasClass('q-field-with-error'))
+      })
+      it('for invalid roasterId', async function () {
+        await wrapper.update()
+        const roasterField =
+          wrapper.find('[data-field-type="roaster"]')
+        assert(roasterField.hasClass('q-field-with-error'))
+      })
+    })
+  })
   describe('child components', () => {
     it('has a CGAutocomplete child component', () => {
       expect(SampleForm.components['CGAutocomplete'])
@@ -293,7 +328,26 @@ describe('SampleForm.vue', () => {
             .returns(Promise.resolve({}))
       })
       afterEach(() => actionSpy.restore())
+      describe('validates from input for errors', () => {
+        it('sets all form fields to dirty to check for empty inputs', () => {
+          wrapper.vm.createSample()
+          expect(wrapper.vm.$v.form.$dirty).to.be.true
+        })
+        it('returns before dispatching submitNewSample action if errors', () => {
+          wrapper.vm.createSample()
+          expect(actionSpy.called).to.be.false
+        })
+      })
       context('when submitNewSample is successful', () => {
+        beforeEach(() => {
+          wrapper.setData({
+            form: {
+              roastDate: '2018-01-01',
+              coffeeId: 1,
+              roasterId: 33
+            }
+          })
+        })
         it('emits a newSampleAdded event', async function () {
           const spy = sinon.spy()
           wrapper.vm.$on('newSampleAdded', spy)
