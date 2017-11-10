@@ -22,13 +22,23 @@ const apiResponse = {
       coffee_id: 19,
       roaster_id: 3,
       cupping_id: 6
+    },
+    invite: {
+      id: 76,
+      status: 'pending',
+      cupping_id: 33,
+      grader_id: 900
     }
   }
 }
 
 const mockCuppingApi = api(apiResponse)
 
-const { newCupping, newSample } = actions(mockCuppingApi)
+const {
+  newCupping,
+  newSample,
+  newInvite
+} = actions(mockCuppingApi)
 
 describe('cupping module: actions', () => {
   describe('newCupping', () => {
@@ -62,6 +72,19 @@ describe('cupping module: actions', () => {
     it('returns a promise that resolves to a cuppedCoffee object', async function () {
       const response = await newSample(context, {})
       expect(response).to.deep.equal(apiResponse.data.cuppedCoffee)
+    })
+  })
+  describe('newInvite', () => {
+    it("commits 'addInvite' mutation with expected payload", async function () {
+      const spy = sinon.spy(context, 'commit')
+      await newInvite(context, {})
+      expect(spy.calledWith('addInvite', apiResponse.data.invite))
+        .to.be.true
+      spy.restore()
+    })
+    it('returns a promise that resolves to an invite object', async function () {
+      const response = await newInvite(context, {})
+      expect(response).to.deep.equal(apiResponse.data.invite)
     })
   })
 })
