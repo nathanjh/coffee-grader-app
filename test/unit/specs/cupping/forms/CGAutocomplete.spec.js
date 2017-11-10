@@ -213,5 +213,28 @@ describe('CGAutocomplete.vue', () => {
         expect(wrapper.vm.terms).to.equal('')
       })
     })
+    describe('notifyIfCleared', () => {
+      let wrapper
+      beforeEach(() => {
+        wrapper = mount(CGAutocomplete, {
+          propsData: {
+            model: 'coffee',
+            sublabel: 'origin'
+          }
+        })
+      })
+      context('when called with an empty string', () => {
+        it("emits an 'inputCleared' event", () => {
+          wrapper.vm.notifyIfCleared('')
+          expect(wrapper.emitted().inputCleared).to.be.truthy
+        })
+      })
+      context('when called with anything else', () => {
+        it("returns without emitting an 'inputCleared' event", () => {
+          wrapper.vm.notifyIfCleared('anything else')
+          expect(wrapper.emitted().inputCleared).to.be.falsey
+        })
+      })
+    })
   })
 })
