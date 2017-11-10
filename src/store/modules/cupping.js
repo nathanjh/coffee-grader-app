@@ -14,6 +14,10 @@ export const mutations = {
   addSample (state, sample) {
     state.cupping.cuppedCoffees
       .push(sample)
+  },
+  addInvite (state, invite) {
+    state.cupping.invites
+      .push(invite)
   }
 }
 
