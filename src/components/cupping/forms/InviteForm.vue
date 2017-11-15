@@ -172,8 +172,10 @@ export default {
           console.log(response)
           this.$emit('newInviteAdded')
           this.clearAllFields()
+          this.$refs.guestInviteModal.close()
           Toast.create
-            .positive(`Successfully invited ${response.username || response.graderEmail}.`)
+            .positive(`Successfully invited ${response.graderEmail ||
+                                              response.grader.name}.`)
         })
         .catch(error => console.log(error))
     },
