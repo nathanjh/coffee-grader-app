@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import InviteForm from '@/cupping/forms/InviteForm'
 import CGAutocomplete from '@/cupping/forms/CGAutocomplete'
 import { mount } from 'vue-test-utils'
@@ -158,8 +157,9 @@ describe('InviteForm.vue', () => {
         actionSpy =
           sinon.stub(wrapper.vm, 'submitNewInvite')
             .returns(Promise.resolve({
-              response: {
-                username: 'mad monkey'
+              graderEmail: 'mad@monkey.com',
+              grader: {
+                name: 'mad monkey'
               }
             }))
       })

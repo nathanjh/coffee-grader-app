@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import SampleForm from '@/cupping/forms/SampleForm'
 import CGAutocomplete from '@/cupping/forms/CGAutocomplete'
 import CGNewResourceForm from '@/cupping/forms/CGNewResourceForm'

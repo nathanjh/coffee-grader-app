@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import CuppingForm from '@/cupping/forms/CuppingForm'
 import Vuex from 'vuex'
 import Vue from 'vue'
