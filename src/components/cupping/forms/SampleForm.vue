@@ -297,7 +297,6 @@ export default {
 
       this.submitNewSample(this.form)
         .then(response => {
-          console.log(response)
           this.$emit('newSampleAdded')
           this.clearAllFields()
           Toast.create

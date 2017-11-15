@@ -33,15 +33,30 @@
       <sample-form
         @newSampleAdded="test('woot')"
       />
+      <q-stepper-navigation class="row justify-center">
+        <q-btn
+          v-if="sampleAdded"
+          class="col-4"
+          @click="$refs.wizard.next()"
+        >
+          next
+        </q-btn>
+      </q-stepper-navigation>
+    </q-step>
+    <q-step
+      title="invite some friends!"
+    >
+      <invite-form
+        @newInviteAdded="test('wootywoot')"
+      />
     </q-step>
   </q-stepper>
 </template>
 
 <script>
 import CuppingForm from './forms/CuppingForm'
-import CGAutocomplete from './forms/CGAutocomplete'
-import CGNewResourceForm from './forms/CGNewResourceForm'
 import SampleForm from './forms/SampleForm'
+import InviteForm from './forms/InviteForm'
 import {
   QStepper,
   QStep,
@@ -53,8 +68,7 @@ export default {
   components: {
     CuppingForm,
     SampleForm,
-    CGAutocomplete,
-    CGNewResourceForm,
+    InviteForm,
     QStepper,
     QStep,
     QStepperNavigation,
@@ -62,7 +76,8 @@ export default {
   },
   data () {
     return {
-      cuppingCreated: false,
+      cuppingCreated: true,
+      sampleAdded: true,
       coffeeModel: {
         name: 'coffee',
         attributes: [

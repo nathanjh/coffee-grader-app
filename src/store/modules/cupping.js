@@ -14,6 +14,10 @@ export const mutations = {
   addSample (state, sample) {
     state.cupping.cuppedCoffees
       .push(sample)
+  },
+  addInvite (state, invite) {
+    state.cupping.invites
+      .push(invite)
   }
 }
 
@@ -39,7 +43,6 @@ export const actions = api => ({
     })
   },
   newSample ({ state, commit, rootState }, form) {
-    console.log(state.cupping)
     return new Promise((resolve, reject) => {
       api.post(`cuppings/${state.cupping.id}/cupped_coffees.json`, {
         roast_date: form.roastDate,
@@ -53,6 +56,25 @@ export const actions = api => ({
         .then(response => {
           commit('addSample', response.data.cuppedCoffee)
           resolve(response.data.cuppedCoffee)
+        })
+        .catch(error => {
+          console.log(error.response.data)
+          reject(error.response.data)
+        })
+    })
+  },
+  newInvite ({ state, commit, rootState }, form) {
+    return new Promise((resolve, reject) => {
+      api.post(`cuppings/${state.cupping.id}/invites.json`, {
+        grader_id: form.graderId,
+        grader_email: form.graderEmail,
+        cupping_id: state.cupping.id
+      }, {
+        headers: rootState.sessions.auth.headers
+      })
+        .then(response => {
+          commit('addInvite', response.data.invite)
+          resolve(response.data.invite)
         })
         .catch(error => {
           console.log(error.response.data)
