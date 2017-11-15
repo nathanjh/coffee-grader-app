@@ -356,6 +356,7 @@ describe('SampleForm.vue', () => {
           const spy = sinon.spy(wrapper.vm, 'clearAllFields')
           await wrapper.vm.createSample()
           assert(spy.called)
+          spy.restore()
         })
         it('creates a toast to communicate success to the user', async function () {
           const toastSpy = sinon.spy(Toast.create, 'positive')
