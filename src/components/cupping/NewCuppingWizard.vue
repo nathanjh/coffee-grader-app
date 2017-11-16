@@ -1,22 +1,15 @@
 <template lang="html">
-  <q-stepper ref="wizard">
+  <q-stepper
+    ref="wizard"
+    :vertical="true"
+  >
     <q-step
-      name="cuppingForm"
-      title="Let's start with some basic info about your cupping..."
+      title="Time/Place"
     >
       <cupping-form
-        @newCuppingCreated="cuppingCreated = true"
+        @newCuppingCreated="$refs.wizard.next()"
         data-form-type="cupping-form"
       />
-      <!-- <c-g-autocomplete
-        :model="'user'"
-        :sublabel="'username'"
-        @itemSelected="test"
-      />
-      <c-g-new-resource-form
-        :model="coffeeModel"
-        :validates="coffeeValidations"
-      /> -->
       <q-stepper-navigation class="row justify-center">
         <q-btn
           v-if="cuppingCreated"
@@ -28,7 +21,7 @@
       </q-stepper-navigation>
     </q-step>
     <q-step
-      title="let's all add some samples for the best fun"
+      title="Add Samples"
     >
       <sample-form
         @newSampleAdded="test('woot')"
@@ -44,7 +37,7 @@
       </q-stepper-navigation>
     </q-step>
     <q-step
-      title="invite some friends!"
+      title="Invite Coffee-Friends"
     >
       <invite-form
         @newInviteAdded="test('wootywoot')"

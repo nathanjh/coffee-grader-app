@@ -1,5 +1,8 @@
 <template lang="html">
   <div>
+    <p class="text-grey-9">
+      Let's start with some basic info about your cupping....
+    </p>
     <div class="row">
       <q-field
         class="col-12"
@@ -46,8 +49,9 @@
     </div>
     <div class="row justify-end">
         <q-btn
-          class="col-2"
-          flat
+          class="col-3"
+          :outline="true"
+          color="grey-7"
           data-button-type="submit-new-cupping"
           @click.prevent="createCupping()"
         >

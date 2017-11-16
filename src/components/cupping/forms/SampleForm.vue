@@ -1,5 +1,9 @@
 <template lang="html">
   <div>
+    <p class="text-grey-9">
+      Please add as many samples as you'd like...
+      <small>(at least one)</small>
+    </p>
     <q-field
       data-field-type="coffee"
       :error="$v.form.coffeeId.$error"
@@ -161,9 +165,9 @@
         choose an alias for blind cuppings
       </label>
     </div>
-    <div class="row justify-end" style="padding-right: 5px;">
+    <div class="row justify-end" :style="{'padding-right': '5px', 'padding-top': '10px'}">
         <q-btn
-          class="col-2"
+          class="col-3"
           :outline="true"
           data-button-type="submit-new-sample"
           @click.prevent="createSample"
