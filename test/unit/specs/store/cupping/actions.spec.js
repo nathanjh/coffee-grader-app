@@ -42,11 +42,11 @@ const {
 
 describe('cupping module: actions', () => {
   describe('newCupping', () => {
-    it("commits 'updateCupping' mutation with expected payload", done => {
+    it("commits 'setCupping' mutation with expected payload", done => {
       const spy = sinon.spy(context, 'commit')
       newCupping(context, {})
         .then(() => {
-          assert(spy.calledWith('updateCupping', apiResponse.data.cupping))
+          assert(spy.calledWith('setCupping', apiResponse.data.cupping))
           done()
         })
         .catch(e => done(e))

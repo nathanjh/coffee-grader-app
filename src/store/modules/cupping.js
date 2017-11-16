@@ -5,7 +5,7 @@ const state = {
 }
 
 export const mutations = {
-  updateCupping (state, cupping) {
+  setCupping (state, cupping) {
     state.cupping = cupping
   },
   clearCupping (state) {
@@ -33,7 +33,7 @@ export const actions = api => ({
         headers: rootState.sessions.auth.headers
       })
         .then(response => {
-          commit('updateCupping', response.data.cupping)
+          commit('setCupping', response.data.cupping)
           resolve(response.data.cupping)
         })
         .catch(error => {

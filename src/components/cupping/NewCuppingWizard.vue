@@ -12,7 +12,6 @@
       />
       <q-stepper-navigation class="row justify-center">
         <q-btn
-          v-if="cuppingCreated"
           class="col-4"
           @click="$refs.wizard.next()"
         >
@@ -24,11 +23,10 @@
       title="Add Samples"
     >
       <sample-form
-        @newSampleAdded="test('woot')"
+        @newSampleAdded="sampleAddedHandler"
       />
       <q-stepper-navigation class="row justify-center">
         <q-btn
-          v-if="sampleAdded"
           class="col-4"
           @click="$refs.wizard.next()"
         >
@@ -69,8 +67,8 @@ export default {
   },
   data () {
     return {
-      cuppingCreated: true,
-      sampleAdded: true,
+      // cuppingCreated: true,
+      sampleAdded: false,
       coffeeModel: {
         name: 'coffee',
         attributes: [
@@ -88,7 +86,10 @@ export default {
     }
   },
   methods: {
-    test (thing) { console.log(thing) }
+    test (thing) { console.log(thing) },
+    sampleAddedHandler () {
+      if (!this.sampleAdded) this.sampleAdded = true
+    }
   }
 }
 </script>
