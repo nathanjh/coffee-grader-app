@@ -49,6 +49,13 @@ export const actions = api => ({
         })
     })
   },
+  // patchCupping ({ state, commit, rootState }, data) {
+  //   return new Promise((resolve, reject) => {
+  //     api.patch(`cuppings/${state.cupping.id}.json`, {
+  //
+  //     })
+  //   })
+  // },
   newSample ({ state, commit, rootState }, form) {
     return new Promise((resolve, reject) => {
       api.post(`cuppings/${state.cupping.id}/cupped_coffees.json`, {
