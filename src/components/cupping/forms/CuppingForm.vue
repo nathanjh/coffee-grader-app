@@ -127,11 +127,12 @@ export default {
           }))
         })
     }
-  },
-  mounted () {
-    console.log('mounted')
-    console.log(this.$store.getters.cupping)
   }
+  // ,
+  // mounted () {
+  //   console.log('mounted')
+  //   console.log(this.$store.getters.cupping)
+  // }
 }
 </script>
 

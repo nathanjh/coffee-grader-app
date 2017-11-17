@@ -1,6 +1,7 @@
 import { mutations } from 'src/store/modules/cupping'
 const {
   setCupping,
+  updateCupping,
   clearCupping,
   addSample,
   addInvite
@@ -40,6 +41,41 @@ describe('cupping module: mutations', () => {
       const state = initialState()
       setCupping(state, cupping)
       expect(state.cupping).to.deep.equal(cupping)
+    })
+  })
+  describe('updateCupping', () => {
+    let state
+    beforeEach(() => {
+      state = initialState()
+      setCupping(state, cupping)
+    })
+    context('given an object with valid keys', () => {
+      it('updates specific cupping property values', () => {
+        expect(state.cupping.cupsPerSample).to.equal(3)
+        const updates = {
+          location: 'new location',
+          cupsPerSample: 5
+        }
+
+        updateCupping(state, updates)
+        expect(state.cupping.cupsPerSample).to.equal(updates.cupsPerSample)
+        expect(state.cupping.location).to.equal(updates.location)
+      })
+    })
+    // make sure it doesnt update if given bad keys
+    context('given an object with invalid keys', () => {
+      const mixedBag = {
+        cupsPerSample: 7,
+        badKey: 'badValue'
+      }
+      it('ignores invalid keys/values', () => {
+        updateCupping(state, mixedBag)
+        expect(Object.keys(state.cupping)).not.to.include('badKey')
+      })
+      it('still updates any valid keys given', () => {
+        updateCupping(state, mixedBag)
+        expect(state.cupping.cupsPerSample).to.equal(mixedBag.cupsPerSample)
+      })
     })
   })
   describe('clearCupping', () => {

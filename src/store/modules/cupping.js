@@ -8,6 +8,13 @@ export const mutations = {
   setCupping (state, cupping) {
     state.cupping = cupping
   },
+  updateCupping (state, updates) {
+    for (const field in updates) {
+      if (state.cupping[field] !== undefined) {
+        state.cupping[field] = updates[field]
+      }
+    }
+  },
   clearCupping (state) {
     state.cupping = {}
   },
