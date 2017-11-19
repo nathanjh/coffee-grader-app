@@ -1,10 +1,33 @@
 import {
+  isObjectArray,
   camelToSnake,
   mapWithKeyTransform,
   snakeizeCamelKeys
 } from 'src/utils/utils'
 
 describe('utilities', () => {
+  describe('isObjectArray', () => {
+    context('given an array of objects', () => {
+      const test = [
+        { a: 1 },
+        { b: 2 },
+        { c: 3 }
+      ]
+      it('returns true', () => {
+        expect(isObjectArray(test)).to.equal(true)
+      })
+    })
+    context('given an array of mixed types', () => {
+      const test = [
+        'a',
+        { b: 1 },
+        2
+      ]
+      it('returns false', () => {
+        expect(isObjectArray(test)).to.equal(false)
+      })
+    })
+  })
   describe('camelToSnake', () => {
     context('given a string with no uppercase chars', () => {
       it('returns the same string', () => {
@@ -98,38 +121,38 @@ describe('utilities', () => {
             c: 4
           }
         }
-        // const test2 = {
-        //   a: [
-        //     { b: 1 },
-        //     { c: 2 }
-        //   ],
-        //   d: {
-        //     e: 3
-        //   },
-        //   f: 4
-        // }
+        const test2 = {
+          a: [
+            { b: 1 },
+            { c: 2 }
+          ],
+          d: {
+            e: 3
+          },
+          f: 4
+        }
         const expected1 = {
           aa: [1, 2, 3],
           bb: {
             cc: 4
           }
         }
-        // const expected2 = {
-        //   aa: [
-        //     { bb: 1 },
-        //     { cc: 2 }
-        //   ],
-        //   dd: {
-        //     ee: 3
-        //   },
-        //   ff: 4
-        // }
+        const expected2 = {
+          aa: [
+            { bb: 1 },
+            { cc: 2 }
+          ],
+          dd: {
+            ee: 3
+          },
+          ff: 4
+        }
         const doubleMe = str => str + str
 
         expect(mapWithKeyTransform(test1, doubleMe))
           .to.deep.equal(expected1)
-        // expect(mapWithKeyTransform(test2, doubleMe))
-        //   .to.deep.equal(expected2)
+        expect(mapWithKeyTransform(test2, doubleMe))
+          .to.deep.equal(expected2)
       })
     })
   })
@@ -143,8 +166,14 @@ describe('utilities', () => {
             numLeaves: 3
           },
           potDecorations: [
-            'rock',
-            'pinwheel'
+            {
+              decType: 'rock',
+              decPrice: 1
+            },
+            {
+              decType: 'pinwheel',
+              decPrice: 4
+            }
           ]
         }
         const expected = {
@@ -154,8 +183,14 @@ describe('utilities', () => {
             num_leaves: 3
           },
           pot_decorations: [
-            'rock',
-            'pinwheel'
+            {
+              dec_type: 'rock',
+              dec_price: 1
+            },
+            {
+              dec_type: 'pinwheel',
+              dec_price: 4
+            }
           ]
         }
         expect(snakeizeCamelKeys(test))

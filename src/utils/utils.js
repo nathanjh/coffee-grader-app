@@ -1,8 +1,28 @@
 /**
+ * Test whether a value is an array of objects
+ *(ObjectArray)
+ *
+ * @param {*} value
+ * @return {boolean}
+ */
+
+export const isObjectArray = value => {
+  return Array.isArray(value) &&
+         value.every(el => isObject(el))
+}
+
+// helper object type-check function
+function isObject (val) {
+  return val &&
+         typeof val === 'object' &&
+         val.constructor === Object
+}
+
+/**
  * Convert a camel-case `string` to snake-case.
  *
- * @param {String} str
- * @return {String}
+ * @param {string} str
+ * @return {string}
  */
 
 export const camelToSnake =
@@ -25,8 +45,17 @@ function toUnderscoreLower (match, offset, string) {
 export const mapWithKeyTransform = (obj, keyTransform) => {
   return Object.keys(obj).reduce((newObj, key) => {
     const val = obj[key]
-    const newVal =
-      (typeof val === 'object' && !Array.isArray(val)) ? mapWithKeyTransform(val, keyTransform) : val
+    let newVal
+    if (isObjectArray(val)) {
+      newVal =
+        val.map(el => mapWithKeyTransform(el, keyTransform))
+    }
+    else if (typeof val === 'object' && !Array.isArray(val)) {
+      newVal = mapWithKeyTransform(val, keyTransform)
+    }
+    else {
+      newVal = val
+    }
     newObj[keyTransform(key)] = newVal
     return newObj
   }, {})
