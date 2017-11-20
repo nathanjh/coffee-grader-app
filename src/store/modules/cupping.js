@@ -49,13 +49,26 @@ export const actions = api => ({
         })
     })
   },
-  // patchCupping ({ state, commit, rootState }, data) {
-  //   return new Promise((resolve, reject) => {
-  //     api.patch(`cuppings/${state.cupping.id}.json`, {
-  //
-  //     })
-  //   })
-  // },
+  patchCupping ({ state, commit, rootState }, data) {
+    return new Promise((resolve, reject) => {
+      api.patch(`cuppings/${state.cupping.id}.json`, data, {
+        transformRequest: [function (data) {
+          console.log(data)
+          return data
+        }],
+        headers: rootState.sessions.auth.headers
+      })
+        .then(response => {
+          console.log(response)
+          commit('updateCupping', data)
+          resolve(data)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error.response.data)
+        })
+    })
+  },
   newSample ({ state, commit, rootState }, form) {
     return new Promise((resolve, reject) => {
       api.post(`cuppings/${state.cupping.id}/cupped_coffees.json`, {

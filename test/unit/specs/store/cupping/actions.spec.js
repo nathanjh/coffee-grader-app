@@ -77,7 +77,7 @@ describe('cupping module: actions', () => {
         .catch(e => done(e))
       spy.restore()
     })
-    it('returns a promise that resolves to a cupping object', done => {
+    it('returns a promise that resolves to updated data', done => {
       patchCupping(context, updateData)
         .then(r => {
           expect(r).to.deep.equal(updateData)
