@@ -52,8 +52,10 @@
           class="col-3"
           :outline="true"
           color="grey-7"
-          data-button-type="submit-new-cupping"
-          @click.prevent="createCupping()"
+          data-button-type="submit-cupping"
+          @click.prevent="newCupping
+                          ? createCupping()
+                          : updateCupping()"
         >
           Submit
         </q-btn>
@@ -62,10 +64,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import { validationMessages } from '@/mixins/validationMessages'
 import { isNum } from 'src/utils/validators/customValidators'
+import { isEmptyObject } from 'src/utils/utils'
 import {
   Toast,
   QCard,
@@ -107,6 +110,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['cupping']),
+    newCupping () {
+      return isEmptyObject(this.cupping)
+    }
+  },
   methods: {
     ...mapActions({
       submitNewCupping: 'newCupping'
@@ -126,6 +135,13 @@ export default {
             icon: 'error_outline'
           }))
         })
+    },
+    updateCupping () {
+      console.log('update cupping!')
+      // console.log('getter from the store: ')
+      // console.log(this.cupping)
+      // console.log('is it empty?')
+      // console.log(isEmptyObject(this.cupping))
     }
   }
   // ,

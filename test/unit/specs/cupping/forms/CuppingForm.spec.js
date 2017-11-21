@@ -7,21 +7,61 @@ import { mount } from 'vue-test-utils'
 describe('CuppingForm.vue', () => {
   Vue.use(Vuex)
 
+  const cupping = {
+    id: 1,
+    location: 'Cafe Grumpy Chelsea circa 2009',
+    cupDate: 'Fri Oct 13 2017 20:01:59 GMT-0700 (PDT)',
+    cupsPerSample: 3,
+    host_id: 224,
+    open: true,
+    cuppedCoffees: [],
+    scores: [],
+    invites: []
+  }
+
   describe('rendered content', () => {
-    let wrapper, submitCuppingButton
-    beforeEach(() => {
-      wrapper = mount(CuppingForm)
-      submitCuppingButton = wrapper.find('[data-button-type="submit-new-cupping"]')
+    context('when no cupping exists in the store', () => {
+      let wrapper, submitCuppingButton, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        wrapper = mount(CuppingForm, { store })
+        submitCuppingButton = wrapper.find('[data-button-type="submit-cupping"]')
+      })
+      it('renders a form submit button', () => {
+        assert(submitCuppingButton.is('button'))
+        expect(submitCuppingButton.text()).to.include('Submit')
+      })
+      it('submitCuppingButton calls createCupping method on click', () => {
+        const createCuppingHandler = sinon.spy(wrapper.vm, 'createCupping')
+        submitCuppingButton.trigger('click')
+        assert(createCuppingHandler.calledOnce)
+        createCuppingHandler.restore()
+      })
     })
-    it('renders a form submit button', () => {
-      assert(submitCuppingButton.is('button'))
-      expect(submitCuppingButton.text()).to.include('Submit')
-    })
-    it('submitCuppingButton calls createCupping method on click', () => {
-      const createCuppingHandler = sinon.spy(wrapper.vm, 'createCupping')
-      submitCuppingButton.trigger('click')
-      assert(createCuppingHandler.calledOnce)
-      createCuppingHandler.restore()
+    context('when a cupping exists in the store', () => {
+      let wrapper, submitCuppingButton, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        store.commit('setCupping', cupping)
+        wrapper = mount(CuppingForm, { store })
+        submitCuppingButton =
+          wrapper.find('[data-button-type="submit-cupping"]')
+      })
+      afterEach(() => store.commit('setCupping', {}))
+      it('renders the submit button', () => {
+        assert(submitCuppingButton.is('button'))
+        expect(submitCuppingButton.text()).to.include('Submit')
+      })
+      it('submitCuppingButton calls updateCupping method on click', () => {
+        const updateCuppingHandler = sinon.spy(wrapper.vm, 'updateCupping')
+        submitCuppingButton.trigger('click')
+        assert(updateCuppingHandler.calledOnce)
+        updateCuppingHandler.restore()
+      })
     })
   })
   describe('data', () => {
@@ -110,6 +150,35 @@ describe('CuppingForm.vue', () => {
         const cupsPerSampleField = wrapper.find('[data-field-type="cups-per-sample"]')
         assert(cupsPerSampleField.hasClass('q-field-with-error'))
         done()
+      })
+    })
+  })
+  describe('computed properties', () => {
+    describe('newCupping', () => {
+      let wrapper, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        wrapper = mount(CuppingForm, { store })
+      })
+      context('when no cupping in the store', () => {
+        it('returns true (bool)', () => {
+          console.log(store.getters)
+          expect(wrapper.vm.newCupping).to.equal(true)
+        })
+      })
+      context('when cupping is in the store', () => {
+        beforeEach(() => {
+          store.commit('setCupping', cupping)
+        })
+        afterEach(() => {
+          store.commit('setCupping', {})
+        })
+        it('returns false (bool)', () => {
+          console.log(store.getters)
+          expect(wrapper.vm.newCupping).to.equal(false)
+        })
       })
     })
   })
