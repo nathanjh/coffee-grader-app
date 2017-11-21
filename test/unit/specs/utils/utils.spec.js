@@ -2,7 +2,8 @@ import {
   isObjectArray,
   camelToSnake,
   mapWithKeyTransform,
-  snakeizeCamelKeys
+  snakeizeCamelKeys,
+  isEmptyObject
 } from 'src/utils/utils'
 
 describe('utilities', () => {
@@ -195,6 +196,20 @@ describe('utilities', () => {
         }
         expect(snakeizeCamelKeys(test))
           .to.deep.equal(expected)
+      })
+    })
+  })
+  describe('isEmptyObject', () => {
+    context('given an empty object', () => {
+      it('returns true (bool)', () => {
+        const cupping = {}
+        expect(isEmptyObject(cupping)).to.equal(true)
+      })
+    })
+    context('given an object with one or more k/v pairs', () => {
+      it('returns false (bool)', () => {
+        const cupping = { id: 1 }
+        expect(isEmptyObject(cupping)).to.equal(false)
       })
     })
   })

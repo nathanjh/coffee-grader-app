@@ -71,3 +71,15 @@ export const mapWithKeyTransform = (obj, keyTransform) => {
 export const snakeizeCamelKeys = obj => {
   return mapWithKeyTransform(obj, camelToSnake)
 }
+
+/**
+ *  check that an POJO is empty
+ *
+ *  @param {Object} obj
+ *  @return {boolean}
+*/
+
+export const isEmptyObject = obj => {
+  return Object.keys(obj).length === 0 &&
+         obj.constructor === Object
+}
