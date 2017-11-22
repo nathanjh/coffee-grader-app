@@ -34,7 +34,7 @@ describe('CuppingForm.vue', () => {
         expect(submitCuppingButton.text()).to.include('Submit')
       })
       it('submitCuppingButton calls createCupping method on click', () => {
-        const createCuppingHandler = sinon.spy(wrapper.vm, 'createCupping')
+        const createCuppingHandler = sinon.stub(wrapper.vm, 'createCupping')
         submitCuppingButton.trigger('click')
         assert(createCuppingHandler.calledOnce)
         createCuppingHandler.restore()
@@ -57,7 +57,7 @@ describe('CuppingForm.vue', () => {
         expect(submitCuppingButton.text()).to.include('Submit')
       })
       it('submitCuppingButton calls updateCupping method on click', () => {
-        const updateCuppingHandler = sinon.spy(wrapper.vm, 'updateCupping')
+        const updateCuppingHandler = sinon.stub(wrapper.vm, 'updateCupping')
         submitCuppingButton.trigger('click')
         assert(updateCuppingHandler.calledOnce)
         updateCuppingHandler.restore()
@@ -194,6 +194,9 @@ describe('CuppingForm.vue', () => {
       it("maps newCupping action to local 'submitNewCupping' method", () => {
         expect(CuppingForm.methods.submitNewCupping).to.be.a('function')
       })
+      it("maps updateCupping action to local 'submitUpdateCupping' method", () => {
+        expect(CuppingForm.methods.submitUpdateCupping).to.be.a('function')
+      })
     })
     describe('createCupping', () => {
       let actionSpy
@@ -230,6 +233,45 @@ describe('CuppingForm.vue', () => {
           // listen for newCuppingCreated event...
           wrapper.vm.$on('newCuppingCreated', spy)
           await wrapper.vm.createCupping()
+          assert(spy.called)
+        })
+      })
+    })
+    describe('updateCupping', () => {
+      let actionSpy
+      beforeEach(() => {
+        actionSpy =
+          sinon.stub(CuppingForm.methods, 'submitUpdateCupping')
+            .returns(Promise.resolve({}))
+      })
+      afterEach(() => {
+        actionSpy.restore()
+      })
+      describe('validates form input for errors', () => {
+        it('sets all form fields to dirty to check for empty inputs', () => {
+          const wrapper = mount(CuppingForm, { store })
+          wrapper.vm.updateCupping()
+          expect(wrapper.vm.$v.form.$dirty).to.be.true
+        })
+        it('returns before dispatching submitUpdateCupping action if errors', () => {
+          mount(CuppingForm, { store })
+            .vm.updateCupping()
+          assert(!actionSpy.called)
+        })
+      })
+      context('when submitUpdateCupping is successful', () => {
+        const validFormData = {
+          location: 'Anywhere, USA',
+          cupDate: '2017-10-19T02:09:19.953Z',
+          cupsPerSample: 5
+        }
+        it('emits a cuppingUpdated event', async function () {
+          const spy = sinon.spy()
+          const wrapper = mount(CuppingForm, { store })
+          wrapper.setData({ form: validFormData })
+          // listen for cuppingUpdated event...
+          wrapper.vm.$on('cuppingUpdated', spy)
+          await wrapper.vm.updateCupping()
           assert(spy.called)
         })
       })

@@ -118,7 +118,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      submitNewCupping: 'newCupping'
+      submitNewCupping: 'newCupping',
+      submitUpdateCupping: 'updateCupping'
     }),
     createCupping () {
       this.$v.form.$touch()
@@ -138,10 +139,20 @@ export default {
     },
     updateCupping () {
       console.log('update cupping!')
-      // console.log('getter from the store: ')
-      // console.log(this.cupping)
-      // console.log('is it empty?')
-      // console.log(isEmptyObject(this.cupping))
+      this.$v.form.$touch()
+      if (this.$v.form.$error) return
+
+      this.submitUpdateCupping(this.form)
+        .then(() => {
+          this.$emit('cuppingUpdated')
+        })
+        .catch(error => {
+          console.log(error)
+          error.forEach(e => Toast.create({
+            html: e,
+            icon: 'error_outline'
+          }))
+        })
     }
   }
   // ,
