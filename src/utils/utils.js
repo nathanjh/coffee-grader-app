@@ -73,7 +73,7 @@ export const snakeizeCamelKeys = obj => {
 }
 
 /**
- *  check that an POJO is empty
+ *  check that a POJO is empty
  *
  *  @param {Object} obj
  *  @return {boolean}

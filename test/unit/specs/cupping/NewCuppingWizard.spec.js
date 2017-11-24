@@ -2,7 +2,7 @@ import NewCuppingWizard from '@/cupping/NewCuppingWizard'
 import CuppingForm from '@/cupping/forms/CuppingForm'
 import SampleForm from '@/cupping/forms/SampleForm'
 import InviteForm from '@/cupping/forms/InviteForm'
-import { mount } from 'vue-test-utils'
+import { shallow } from 'vue-test-utils'
 
 describe('NewCuppingWizard.vue', () => {
   describe('child components', () => {
@@ -22,7 +22,7 @@ describe('NewCuppingWizard.vue', () => {
   describe('methods', () => {
     let wrapper
     beforeEach(() => {
-      wrapper = mount(NewCuppingWizard)
+      wrapper = shallow(NewCuppingWizard)
     })
     describe('sampleAddedHandler', () => {
       it('sets the sampleAdded property to true (bool) if it was false', () => {
