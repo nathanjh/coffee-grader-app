@@ -56,6 +56,7 @@
           @click.prevent="newCupping
                           ? createCupping()
                           : updateCupping()"
+          :disable="!okToSubmit"
         >
           Submit
         </q-btn>
@@ -114,6 +115,13 @@ export default {
     ...mapGetters(['cupping']),
     newCupping () {
       return isEmptyObject(this.cupping)
+    },
+    okToSubmit () {
+      if (this.newCupping) return true
+      else {
+        return !Object.keys(this.form)
+          .every(key => this.form[key] === this.cupping[key])
+      }
     }
   },
   methods: {
