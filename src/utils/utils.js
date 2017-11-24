@@ -50,7 +50,9 @@ export const mapWithKeyTransform = (obj, keyTransform) => {
       newVal =
         val.map(el => mapWithKeyTransform(el, keyTransform))
     }
-    else if (typeof val === 'object' && !Array.isArray(val)) {
+    else if (typeof val === 'object' &&
+             val !== null &&
+             !Array.isArray(val)) {
       newVal = mapWithKeyTransform(val, keyTransform)
     }
     else {

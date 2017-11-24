@@ -175,7 +175,8 @@ describe('utilities', () => {
               decType: 'pinwheel',
               decPrice: 4
             }
-          ]
+          ],
+          fruits: null
         }
         const expected = {
           id: 1,
@@ -192,7 +193,8 @@ describe('utilities', () => {
               dec_type: 'pinwheel',
               dec_price: 4
             }
-          ]
+          ],
+          fruits: null
         }
         expect(snakeizeCamelKeys(test))
           .to.deep.equal(expected)
