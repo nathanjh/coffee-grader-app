@@ -119,7 +119,7 @@ export default {
   methods: {
     ...mapActions({
       submitNewCupping: 'newCupping',
-      submitUpdateCupping: 'updateCupping'
+      submitUpdateCupping: 'patchCupping'
     }),
     createCupping () {
       this.$v.form.$touch()
@@ -154,12 +154,15 @@ export default {
           }))
         })
     }
+  },
+  created () {
+    if (!this.newCupping) {
+      Object.keys(this.form)
+        .forEach(key => {
+          this.form[key] = this.cupping[key]
+        })
+    }
   }
-  // ,
-  // mounted () {
-  //   console.log('mounted')
-  //   console.log(this.$store.getters.cupping)
-  // }
 }
 </script>
 
