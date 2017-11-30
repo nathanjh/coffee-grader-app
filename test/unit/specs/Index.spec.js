@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import { createLocalVue, shallow, mount } from 'vue-test-utils'
 import Index from '@/Index'
 import Vue from 'vue'

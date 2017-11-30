@@ -1,25 +1,20 @@
 <template lang="html">
-  <q-stepper ref="wizard">
+  <q-stepper
+    ref="wizard"
+    :vertical="true"
+  >
     <q-step
-      name="cuppingForm"
-      title="Let's start with some basic info about your cupping..."
+      title="Time/Place"
     >
       <cupping-form
-        @newCuppingCreated="cuppingCreated = true"
+        @newCuppingCreated="cuppingCreatedHandler"
         data-form-type="cupping-form"
       />
-      <!-- <c-g-autocomplete
-        :model="'user'"
-        :sublabel="'username'"
-        @itemSelected="test"
-      />
-      <c-g-new-resource-form
-        :model="coffeeModel"
-        :validates="coffeeValidations"
-      /> -->
-      <q-stepper-navigation class="row justify-center">
+      <q-stepper-navigation
+        class="row justify-center"
+        v-if="cuppingCreated"
+      >
         <q-btn
-          v-if="cuppingCreated"
           class="col-4"
           @click="$refs.wizard.next()"
         >
@@ -28,12 +23,18 @@
       </q-stepper-navigation>
     </q-step>
     <q-step
-      title="let's all add some samples for the best fun"
+      title="Add Samples"
     >
       <sample-form
-        @newSampleAdded="test('woot')"
+        @newSampleAdded="sampleAddedHandler"
       />
       <q-stepper-navigation class="row justify-center">
+        <q-btn
+          class="col-4"
+          @click="$refs.wizard.previous()"
+        >
+          back
+        </q-btn>
         <q-btn
           v-if="sampleAdded"
           class="col-4"
@@ -44,11 +45,17 @@
       </q-stepper-navigation>
     </q-step>
     <q-step
-      title="invite some friends!"
+      title="Invite Coffee-Friends"
     >
-      <invite-form
-        @newInviteAdded="test('wootywoot')"
-      />
+      <invite-form/>
+      <q-stepper-navigation class="row justify-center">
+        <q-btn
+          class="col-4"
+          @click="$refs.wizard.previous()"
+        >
+          back
+        </q-btn>
+      </q-stepper-navigation>
     </q-step>
   </q-stepper>
 </template>
@@ -76,8 +83,8 @@ export default {
   },
   data () {
     return {
-      cuppingCreated: true,
-      sampleAdded: true,
+      cuppingCreated: false,
+      sampleAdded: false,
       coffeeModel: {
         name: 'coffee',
         attributes: [
@@ -95,7 +102,14 @@ export default {
     }
   },
   methods: {
-    test (thing) { console.log(thing) }
+    test (thing) { console.log(thing) },
+    sampleAddedHandler () {
+      if (!this.sampleAdded) this.sampleAdded = true
+    },
+    cuppingCreatedHandler () {
+      this.cuppingCreated = true
+      this.$refs.wizard.next()
+    }
   }
 }
 </script>

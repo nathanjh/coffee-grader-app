@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import SignInForm from '@/session/forms/SignInForm'
 import AuthButton from '@/session/AuthButton'
 import { mount } from 'vue-test-utils'

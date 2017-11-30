@@ -37,16 +37,17 @@ const mockCuppingApi = api(apiResponse)
 const {
   newCupping,
   newSample,
-  newInvite
+  newInvite,
+  patchCupping
 } = actions(mockCuppingApi)
 
 describe('cupping module: actions', () => {
   describe('newCupping', () => {
-    it("commits 'updateCupping' mutation with expected payload", done => {
+    it("commits 'setCupping' mutation with expected payload", done => {
       const spy = sinon.spy(context, 'commit')
       newCupping(context, {})
         .then(() => {
-          assert(spy.calledWith('updateCupping', apiResponse.data.cupping))
+          assert(spy.calledWith('setCupping', apiResponse.data.cupping))
           done()
         })
         .catch(e => done(e))
@@ -56,6 +57,30 @@ describe('cupping module: actions', () => {
       newCupping(context, {})
         .then(r => {
           expect(r).to.deep.equal(apiResponse.data.cupping)
+          done()
+        })
+        .catch(e => done(e))
+    })
+  })
+  describe('patchCupping', () => {
+    const updateData = {
+      location: 'new location',
+      cupsPerSample: 2
+    }
+    it("commits 'updateCupping' mutation with expected payload", done => {
+      const spy = sinon.spy(context, 'commit')
+      patchCupping(context, updateData)
+        .then(() => {
+          assert(spy.calledWith('updateCupping', updateData))
+          done()
+        })
+        .catch(e => done(e))
+      spy.restore()
+    })
+    it('returns a promise that resolves to updated data', done => {
+      patchCupping(context, updateData)
+        .then(r => {
+          expect(r).to.deep.equal(updateData)
           done()
         })
         .catch(e => done(e))

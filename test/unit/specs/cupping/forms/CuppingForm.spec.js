@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import CuppingForm from '@/cupping/forms/CuppingForm'
 import Vuex from 'vuex'
 import Vue from 'vue'
@@ -8,21 +7,73 @@ import { mount } from 'vue-test-utils'
 describe('CuppingForm.vue', () => {
   Vue.use(Vuex)
 
+  const cupping = {
+    id: 1,
+    location: 'Cafe Grumpy Chelsea circa 2009',
+    cupDate: 'Fri Oct 13 2017 20:01:59 GMT-0700 (PDT)',
+    cupsPerSample: 3,
+    host_id: 224,
+    open: true,
+    cuppedCoffees: [],
+    scores: [],
+    invites: []
+  }
+
   describe('rendered content', () => {
-    let wrapper, submitCuppingButton
-    beforeEach(() => {
-      wrapper = mount(CuppingForm)
-      submitCuppingButton = wrapper.find('[data-button-type="submit-new-cupping"]')
+    context('when no cupping exists in the store', () => {
+      let wrapper, submitCuppingButton, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        wrapper = mount(CuppingForm, { store })
+        submitCuppingButton = wrapper.find('[data-button-type="submit-cupping"]')
+      })
+      it('renders a form submit button', () => {
+        assert(submitCuppingButton.is('button'))
+        expect(submitCuppingButton.text()).to.include('Submit')
+      })
+      it('submitCuppingButton calls createCupping method on click', () => {
+        const createCuppingHandler = sinon.stub(wrapper.vm, 'createCupping')
+        submitCuppingButton.trigger('click')
+        assert(createCuppingHandler.calledOnce)
+        createCuppingHandler.restore()
+      })
     })
-    it('renders a form submit button', () => {
-      assert(submitCuppingButton.is('button'))
-      expect(submitCuppingButton.text()).to.include('Submit')
-    })
-    it('submitCuppingButton calls createCupping method on click', () => {
-      const createCuppingHandler = sinon.spy(wrapper.vm, 'createCupping')
-      submitCuppingButton.trigger('click')
-      assert(createCuppingHandler.calledOnce)
-      createCuppingHandler.restore()
+    context('when a cupping exists in the store', () => {
+      let wrapper, submitCuppingButton, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        store.commit('setCupping', cupping)
+        wrapper = mount(CuppingForm, { store })
+        submitCuppingButton =
+          wrapper.find('[data-button-type="submit-cupping"]')
+      })
+      afterEach(() => store.commit('setCupping', {}))
+      it('renders the submit button', () => {
+        assert(submitCuppingButton.is('button'))
+        expect(submitCuppingButton.text()).to.include('Submit')
+      })
+      context('when form data has been updated', () => {
+        it('submitCuppingButton calls updateCupping method on click', () => {
+          wrapper.setData({
+            form: {
+              location: 'new location!'
+            }
+          })
+          const updateCuppingHandler = sinon.stub(wrapper.vm, 'updateCupping')
+          submitCuppingButton.trigger('click')
+          assert(updateCuppingHandler.calledOnce)
+          updateCuppingHandler.restore()
+        })
+      })
+      context('when form data has not been updated', () => {
+        it('adds the disabled class when no diff between form data and cupping in the store', () => {
+          expect(submitCuppingButton.hasClass('disabled')).to.be.true
+        })
+      })
     })
   })
   describe('data', () => {
@@ -61,13 +112,16 @@ describe('CuppingForm.vue', () => {
   })
   describe('form validations (Vuelidate)', () => {
     const form = CuppingForm.validations.form
+    const store = new Vuex.Store({
+      modules: { Cupping }
+    })
 
     it('validates form.location by requirement', () => {
       expect(Object.keys(form.location)).to.include('required')
       expect(form.location.required).to.be.a('function')
     })
     it('sets the error class for invalid location', done => {
-      const wrapper = mount(CuppingForm)
+      const wrapper = mount(CuppingForm, { store })
       // location is required...
       wrapper.vm.$v.form.location.$touch()
       wrapper.vm.$nextTick(() => {
@@ -81,7 +135,7 @@ describe('CuppingForm.vue', () => {
       expect(form.cupDate.required).to.be.a('function')
     })
     it('sets the error class for invalid cupDate', done => {
-      const wrapper = mount(CuppingForm)
+      const wrapper = mount(CuppingForm, { store })
       // cupDate is required...
       wrapper.vm.$v.form.cupDate.$touch()
       wrapper.vm.$nextTick(() => {
@@ -99,7 +153,7 @@ describe('CuppingForm.vue', () => {
       expect(form.cupsPerSample.required).to.be.a('function')
     })
     it('sets the error class for invalid cupsPerSample', done => {
-      const wrapper = mount(CuppingForm)
+      const wrapper = mount(CuppingForm, { store })
       // cupsPerSample should be a number...
       wrapper.setData({
         form: {
@@ -114,6 +168,73 @@ describe('CuppingForm.vue', () => {
       })
     })
   })
+  describe('computed properties', () => {
+    describe('newCupping', () => {
+      let wrapper, store
+      beforeEach(() => {
+        store = new Vuex.Store({
+          modules: { Cupping }
+        })
+        wrapper = mount(CuppingForm, { store })
+      })
+      context('when no cupping in the store', () => {
+        it('returns true (bool)', () => {
+          console.log(store.getters)
+          expect(wrapper.vm.newCupping).to.equal(true)
+        })
+      })
+      context('when cupping is in the store', () => {
+        beforeEach(() => {
+          store.commit('setCupping', cupping)
+        })
+        afterEach(() => {
+          store.commit('setCupping', {})
+        })
+        it('returns false (bool)', () => {
+          console.log(store.getters)
+          expect(wrapper.vm.newCupping).to.equal(false)
+        })
+      })
+    })
+    describe('okToSubmit', () => {
+      const store = new Vuex.Store({
+        modules: { Cupping }
+      })
+      context('when newCupping is true', () => {
+        it('returns true', () => {
+          const wrapper = mount(CuppingForm, { store })
+          assert(wrapper.vm.newCupping)
+          expect(wrapper.vm.okToSubmit).to.equal(true)
+        })
+      })
+      context('when newCupping is false', () => {
+        beforeEach(() => store.commit('setCupping', cupping))
+        afterEach(() => store.commit('setCupping', {}))
+        context('when form data is the same as data in the store', () => {
+          it('returns false (bool)', () => {
+            const wrapper = mount(CuppingForm, { store })
+            assert(!wrapper.vm.newCupping)
+            assert(wrapper.vm.form.location === cupping.location &&
+                   wrapper.vm.form.cupDate === cupping.cupDate &&
+                   wrapper.vm.form.cupsPerSample === cupping.cupsPerSample)
+            expect(wrapper.vm.okToSubmit).to.equal(false)
+          })
+        })
+        context('when form data has been modified', () => {
+          it('returns true (bool)', () => {
+            const wrapper = mount(CuppingForm, { store })
+            assert(!wrapper.vm.newCupping)
+            wrapper.setData({
+              form: {
+                location: 'new location!'
+              }
+            })
+            expect(wrapper.vm.okToSubmit).to.equal(true)
+          })
+        })
+      })
+    })
+  })
   describe('methods', () => {
     /* add a store instance available to tests due to mapped action
     dependency */
@@ -125,6 +246,9 @@ describe('CuppingForm.vue', () => {
     describe('vuex actions', () => {
       it("maps newCupping action to local 'submitNewCupping' method", () => {
         expect(CuppingForm.methods.submitNewCupping).to.be.a('function')
+      })
+      it("maps updateCupping action to local 'submitUpdateCupping' method", () => {
+        expect(CuppingForm.methods.submitUpdateCupping).to.be.a('function')
       })
     })
     describe('createCupping', () => {
@@ -164,6 +288,76 @@ describe('CuppingForm.vue', () => {
           await wrapper.vm.createCupping()
           assert(spy.called)
         })
+      })
+    })
+    describe('updateCupping', () => {
+      let actionSpy
+      beforeEach(() => {
+        actionSpy =
+          sinon.stub(CuppingForm.methods, 'submitUpdateCupping')
+            .returns(Promise.resolve({}))
+      })
+      afterEach(() => {
+        actionSpy.restore()
+      })
+      describe('validates form input for errors', () => {
+        it('sets all form fields to dirty to check for empty inputs', () => {
+          const wrapper = mount(CuppingForm, { store })
+          wrapper.vm.updateCupping()
+          expect(wrapper.vm.$v.form.$dirty).to.be.true
+        })
+        it('returns before dispatching submitUpdateCupping action if errors', () => {
+          mount(CuppingForm, { store })
+            .vm.updateCupping()
+          assert(!actionSpy.called)
+        })
+      })
+      context('when submitUpdateCupping is successful', () => {
+        const validFormData = {
+          location: 'Anywhere, USA',
+          cupDate: '2017-10-19T02:09:19.953Z',
+          cupsPerSample: 5
+        }
+        it('emits a cuppingUpdated event', async function () {
+          const spy = sinon.spy()
+          const wrapper = mount(CuppingForm, { store })
+          wrapper.setData({ form: validFormData })
+          // listen for cuppingUpdated event...
+          wrapper.vm.$on('cuppingUpdated', spy)
+          await wrapper.vm.updateCupping()
+          assert(spy.called)
+        })
+      })
+    })
+  })
+  describe('lifecycle hooks', () => {
+    const store = new Vuex.Store({
+      modules: {
+        Cupping
+      }
+    })
+    it('has a created hook', () => {
+      expect(CuppingForm.created).to.be.a('function')
+    })
+    context('when newCupping computed property is true', () => {
+      it("doesn't set the form data", () => {
+        const wrapper = mount(CuppingForm, { store })
+
+        expect(wrapper.vm.newCupping).to.equal(true)
+        expect(wrapper.vm.form.location).to.equal('')
+        expect(wrapper.vm.form.cupDate).to.equal(null)
+        expect(wrapper.vm.form.cupsPerSample).to.equal(3)
+      })
+    })
+    context('when newCupping computed property is false', () => {
+      beforeEach(() => store.commit('setCupping', cupping))
+      afterEach(() => store.commit('setCupping', {}))
+      it('sets the form data with data on the store', () => {
+        const wrapper = mount(CuppingForm, { store })
+        expect(wrapper.vm.newCupping).to.equal(false)
+        expect(wrapper.vm.form.location).to.equal(cupping.location)
+        expect(wrapper.vm.form.cupDate).to.equal(cupping.cupDate)
+        expect(wrapper.vm.form.cupsPerSample).to.equal(cupping.cupsPerSample)
       })
     })
   })

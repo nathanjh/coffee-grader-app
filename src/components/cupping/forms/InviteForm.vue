@@ -44,7 +44,7 @@
     </label>
     <div class="row justify-end" style="padding-right: 5px;">
       <q-btn
-        class="col-2"
+        class="col-3"
         :outline="true"
         data-button-type="with-grader-id"
         @click.prevent="submitButtonHandler('graderEmail', createInvite)"

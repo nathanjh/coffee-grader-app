@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import CGAutocomplete from '@/cupping/forms/CGAutocomplete'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
 import { mount } from 'vue-test-utils'

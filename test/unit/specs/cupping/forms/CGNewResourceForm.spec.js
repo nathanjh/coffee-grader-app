@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import CGNewResourceForm from '@/cupping/forms/CGNewResourceForm'
 import { mount } from 'vue-test-utils'
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'

@@ -1,12 +1,20 @@
 import CoffeeGraderApi from 'src/api/coffeeGraderApi'
+import { snakeizeCamelKeys } from 'src/utils/utils'
 
 const state = {
   cupping: {}
 }
 
 export const mutations = {
-  updateCupping (state, cupping) {
+  setCupping (state, cupping) {
     state.cupping = cupping
+  },
+  updateCupping (state, updates) {
+    for (const field in updates) {
+      if (state.cupping[field] !== undefined) {
+        state.cupping[field] = updates[field]
+      }
+    }
   },
   clearCupping (state) {
     state.cupping = {}
@@ -33,11 +41,30 @@ export const actions = api => ({
         headers: rootState.sessions.auth.headers
       })
         .then(response => {
-          commit('updateCupping', response.data.cupping)
+          commit('setCupping', response.data.cupping)
           resolve(response.data.cupping)
         })
         .catch(error => {
           console.log(error.response.data)
+          reject(error.response.data)
+        })
+    })
+  },
+  patchCupping ({ state, commit, rootState }, data) {
+    const formData = snakeizeCamelKeys(
+      Object.assign({}, data, { hostId: rootState.sessions.user.id })
+    )
+    return new Promise((resolve, reject) => {
+      api.patch(`cuppings/${state.cupping.id}.json`, formData, {
+        headers: rootState.sessions.auth.headers
+      })
+        .then(response => {
+          console.log(response)
+          commit('updateCupping', data)
+          resolve(data)
+        })
+        .catch(error => {
+          console.log(error)
           reject(error.response.data)
         })
     })

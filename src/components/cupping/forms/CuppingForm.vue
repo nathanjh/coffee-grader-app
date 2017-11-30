@@ -1,5 +1,11 @@
 <template lang="html">
   <div>
+    <p v-if="newCupping" class="text-grey-9">
+      Let's start with some basic info about your cupping....
+    </p>
+    <p v-else class="text-grey-9">
+      Feel free to update your cupping info... <small>(and click submit)</small>
+    </p>
     <div class="row">
       <q-field
         class="col-12"
@@ -46,10 +52,14 @@
     </div>
     <div class="row justify-end">
         <q-btn
-          class="col-2"
-          flat
-          data-button-type="submit-new-cupping"
-          @click.prevent="createCupping()"
+          class="col-3"
+          :outline="true"
+          color="grey-7"
+          data-button-type="submit-cupping"
+          @click.prevent="newCupping
+                          ? createCupping()
+                          : updateCupping()"
+          :disable="!okToSubmit"
         >
           Submit
         </q-btn>
@@ -58,10 +68,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import { validationMessages } from '@/mixins/validationMessages'
 import { isNum } from 'src/utils/validators/customValidators'
+import { isEmptyObject } from 'src/utils/utils'
 import {
   Toast,
   QCard,
@@ -103,9 +114,23 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['cupping']),
+    newCupping () {
+      return isEmptyObject(this.cupping)
+    },
+    okToSubmit () {
+      if (this.newCupping) return true
+      else {
+        return !Object.keys(this.form)
+          .every(key => this.form[key] === this.cupping[key])
+      }
+    }
+  },
   methods: {
     ...mapActions({
-      submitNewCupping: 'newCupping'
+      submitNewCupping: 'newCupping',
+      submitUpdateCupping: 'patchCupping'
     }),
     createCupping () {
       this.$v.form.$touch()
@@ -121,6 +146,31 @@ export default {
             html: e,
             icon: 'error_outline'
           }))
+        })
+    },
+    updateCupping () {
+      console.log('update cupping!')
+      this.$v.form.$touch()
+      if (this.$v.form.$error) return
+
+      this.submitUpdateCupping(this.form)
+        .then(() => {
+          this.$emit('cuppingUpdated')
+        })
+        .catch(error => {
+          console.log(error)
+          error.forEach(e => Toast.create({
+            html: e,
+            icon: 'error_outline'
+          }))
+        })
+    }
+  },
+  created () {
+    if (!this.newCupping) {
+      Object.keys(this.form)
+        .forEach(key => {
+          this.form[key] = this.cupping[key]
         })
     }
   }
