@@ -7,10 +7,13 @@
       title="Time/Place"
     >
       <cupping-form
-        @newCuppingCreated="$refs.wizard.next()"
+        @newCuppingCreated="cuppingCreatedHandler"
         data-form-type="cupping-form"
       />
-      <q-stepper-navigation class="row justify-center">
+      <q-stepper-navigation
+        class="row justify-center"
+        v-if="cuppingCreated"
+      >
         <q-btn
           class="col-4"
           @click="$refs.wizard.next()"
@@ -28,6 +31,13 @@
       <q-stepper-navigation class="row justify-center">
         <q-btn
           class="col-4"
+          @click="$refs.wizard.previous()"
+        >
+          back
+        </q-btn>
+        <q-btn
+          v-if="sampleAdded"
+          class="col-4"
           @click="$refs.wizard.next()"
         >
           next
@@ -37,9 +47,15 @@
     <q-step
       title="Invite Coffee-Friends"
     >
-      <invite-form
-        @newInviteAdded="test('wootywoot')"
-      />
+      <invite-form/>
+      <q-stepper-navigation class="row justify-center">
+        <q-btn
+          class="col-4"
+          @click="$refs.wizard.previous()"
+        >
+          back
+        </q-btn>
+      </q-stepper-navigation>
     </q-step>
   </q-stepper>
 </template>
@@ -67,7 +83,7 @@ export default {
   },
   data () {
     return {
-      // cuppingCreated: true,
+      cuppingCreated: false,
       sampleAdded: false,
       coffeeModel: {
         name: 'coffee',
@@ -89,6 +105,10 @@ export default {
     test (thing) { console.log(thing) },
     sampleAddedHandler () {
       if (!this.sampleAdded) this.sampleAdded = true
+    },
+    cuppingCreatedHandler () {
+      this.cuppingCreated = true
+      this.$refs.wizard.next()
     }
   }
 }

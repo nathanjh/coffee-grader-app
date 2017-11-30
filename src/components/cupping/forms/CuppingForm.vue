@@ -1,7 +1,10 @@
 <template lang="html">
   <div>
-    <p class="text-grey-9">
+    <p v-if="newCupping" class="text-grey-9">
       Let's start with some basic info about your cupping....
+    </p>
+    <p v-else class="text-grey-9">
+      Feel free to update your cupping info... <small>(and click submit)</small>
     </p>
     <div class="row">
       <q-field
