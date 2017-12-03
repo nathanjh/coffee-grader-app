@@ -1,69 +1,73 @@
 <template lang="html">
-  <q-stepper
-    ref="wizard"
-    :vertical="true"
-  >
-    <q-step
-      title="Time/Place"
-    >
-      <cupping-form
+  <div>
+        <q-stepper
+        ref="wizard"
+        :vertical="true"
+        >
+        <q-step
+        title="Time/Place"
+        >
+        <cupping-form
         @newCuppingCreated="cuppingCreatedHandler"
         data-form-type="cupping-form"
-      />
-      <q-stepper-navigation
+        />
+        <q-stepper-navigation
         class="row justify-center"
         v-if="cuppingCreated"
+        >
+        <q-btn
+        class="col-4"
+        @click="$refs.wizard.next()"
+        >
+        next
+      </q-btn>
+    </q-stepper-navigation>
+    </q-step>
+    <q-step
+    title="Add Samples"
+    >
+    <sample-form
+    @newSampleAdded="sampleAddedHandler"
+    />
+    <q-stepper-navigation class="row justify-center">
+      <q-btn
+      class="col-4"
+      @click="$refs.wizard.previous()"
       >
-        <q-btn
-          class="col-4"
-          @click="$refs.wizard.next()"
-        >
-          next
-        </q-btn>
-      </q-stepper-navigation>
+      back
+    </q-btn>
+    <q-btn
+    v-if="sampleAdded"
+    class="col-4"
+    @click="$refs.wizard.next()"
+    >
+    next
+    </q-btn>
+    </q-stepper-navigation>
     </q-step>
     <q-step
-      title="Add Samples"
+    title="Invite Coffee-Friends"
     >
-      <sample-form
-        @newSampleAdded="sampleAddedHandler"
-      />
-      <q-stepper-navigation class="row justify-center">
-        <q-btn
-          class="col-4"
-          @click="$refs.wizard.previous()"
-        >
-          back
-        </q-btn>
-        <q-btn
-          v-if="sampleAdded"
-          class="col-4"
-          @click="$refs.wizard.next()"
-        >
-          next
-        </q-btn>
-      </q-stepper-navigation>
+    <invite-form/>
+    <q-stepper-navigation class="row justify-center">
+      <q-btn
+      class="col-4"
+      @click="$refs.wizard.previous()"
+      >
+      back
+    </q-btn>
+    </q-stepper-navigation>
     </q-step>
-    <q-step
-      title="Invite Coffee-Friends"
-    >
-      <invite-form/>
-      <q-stepper-navigation class="row justify-center">
-        <q-btn
-          class="col-4"
-          @click="$refs.wizard.previous()"
-        >
-          back
-        </q-btn>
-      </q-stepper-navigation>
-    </q-step>
-  </q-stepper>
+    </q-stepper>
+    <new-cupping-summary/>
+  </div>
 </template>
 
 <script>
 import CuppingForm from './forms/CuppingForm'
 import SampleForm from './forms/SampleForm'
 import InviteForm from './forms/InviteForm'
+import NewCuppingSummary from './NewCuppingSummary'
 import {
   QStepper,
   QStep,
@@ -76,6 +80,7 @@ export default {
     CuppingForm,
     SampleForm,
     InviteForm,
+    NewCuppingSummary,
     QStepper,
     QStep,
     QStepperNavigation,
@@ -114,5 +119,5 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="stylus">
 </style>
